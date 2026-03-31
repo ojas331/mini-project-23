@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Weather App</title>
+</head>
+<body>
+
+<h2>Send Data to AWS</h2>
+
+<button onclick="sendData();">Send Temperature</button>
+
+<script>
+function sendData() {
+    fetch("https://dgtmofz0y7.execute-api.ap-south-1.amazonaws.com/default/nimbus-lambda", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            device_id: "sensor-2",
+            temperature: 45
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert("Response: " + JSON.stringify(data));
+    })
+    .catch(error => {
+        console.error(error);
+    });
+}
+</script>
+
+</body>
+</html>

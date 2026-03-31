@@ -1,0 +1,85 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Simple Cloud Weather Monitoring Setup
+
+Parameters:
+  ProjectName:
+    Type: String
+    Default: nimbus
+
+  AlertEmail:
+    Type: String
+    Default: saraswatojas263@gmail.com
+
+Resources:
+
+  # ✅ S3 Bucket
+  WeatherDataBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub '${ProjectName}-weather-${AWS::AccountId}-${AWS::Region}'
+      VersioningConfiguration:
+        Status: Enabled
+
+  # ✅ DynamoDB Table
+  SensorTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${ProjectName}-sensor-data'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: device_id
+          AttributeType: S
+        - AttributeName: timestamp
+          AttributeType: N
+      KeySchema:
+        - AttributeName: device_id
+          KeyType: HASH
+        - AttributeName: timestamp
+          KeyType: RANGE
+
+  # ✅ SNS Topic (Email Alert)
+  AlertTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub '${ProjectName}-alerts'
+      Subscription:
+        - Protocol: email
+          Endpoint: !Ref AlertEmail
+
+  # ✅ IAM Role for Lambda
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub '${ProjectName}-lambda-role'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+  # ✅ Lambda Function
+  WeatherLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub '${ProjectName}-lambda'
+      Runtime: python3.12
+      Handler: index.handler
+      Role: !GetAtt LambdaRole.Arn
+      Code:
+        ZipFile: |
+          def handler(event, context):
+              return {"statusCode": 200, "body": "Weather API Running"}
+
+Outputs:
+  BucketName:
+    Value: !Ref WeatherDataBucket
+
+  DynamoDBTable:
+    Value: !Ref SensorTable
+
+  LambdaName:
+    Value: !Ref WeatherLambda
