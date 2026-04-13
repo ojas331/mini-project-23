@@ -1,148 +1,64 @@
-<!DOCTYPE html>
+<!DOCTYPE html
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>NimbusCast — IoT Weather Intelligence</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,600;1,300&family=Outfit:wght@300;400;600;700;800&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet"/>
+<title>NimbusCast IoT Weather</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;600&family=Outfit:wght@300;400;600;700;800&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet"/>
 <style>
-:root{
-  --ink:#e6f2ff;
-  --ink2:#7aa6d9;
-  --ink3:#3a5f8a;
-
-  --bg:#020b16;
-  --bg2:#061525;
-  --bg3:#0b1e33;
-
-  --card:#0f223a;
-  --card2:#132c4d;
-
-  --border:rgba(79,195,255,0.1);
-  --border2:rgba(79,195,255,0.25);
-
-  --green:#4fc3ff;
-  --green2:#1e88e5;
-  --green3:rgba(79,195,255,0.12);
-
-  --amber:#ffd54f;
-  --red:#ff6b6b;
-  --blue:#4fc3ff;
-  --purple:#b39ddb;
-
-  --font:Outfit,sans-serif;
-  --mono:'IBM Plex Mono',monospace;
-  --cond:'Barlow Condensed',sans-serif;
-
-  --r:10px;
-}
+:root{--ink:#e6f2ff;--ink2:#7aa6d9;--ink3:#3a5f8a;--bg:#020b16;--bg2:#061525;--bg3:#0b1e33;--card:#0f223a;--card2:#132c4d;--border:rgba(79,195,255,0.1);--border2:rgba(79,195,255,0.25);--green:#4fc3ff;--green2:#1e88e5;--green3:rgba(79,195,255,0.12);--amber:#ffd54f;--red:#ff6b6b;--blue:#4fc3ff;--purple:#b39ddb;--font:Outfit,sans-serif;--mono:'IBM Plex Mono',monospace;--cond:'Barlow Condensed',sans-serif;--r:10px}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--font);overflow:hidden}
 body{display:grid;grid-template-columns:230px 1fr;grid-template-rows:52px 1fr}
-
-/* NAV */
-.topbar{
-  grid-column:1/-1;background:var(--bg2);
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;gap:16px;padding:0 20px;
-}
+.topbar{grid-column:1/-1;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px;padding:0 20px}
 .brand{font-family:var(--cond);font-size:20px;font-weight:700;letter-spacing:1px;color:var(--green);white-space:nowrap}
 .brand span{color:var(--ink2)}
-.tb-search{
-  flex:1;max-width:360px;
-  background:var(--card);border:1px solid var(--border);border-radius:6px;
-  display:flex;align-items:center;gap:8px;padding:6px 12px;
-}
+.tb-search{flex:1;max-width:360px;background:var(--card);border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;gap:8px;padding:6px 12px}
 .tb-search input{background:none;border:none;outline:none;color:var(--ink);font-size:13px;font-family:var(--mono);width:100%}
 .tb-search input::placeholder{color:var(--ink3)}
 .tb-right{display:flex;align-items:center;gap:10px;margin-left:auto}
-.pill{
-  background:var(--card);border:1px solid var(--border);border-radius:20px;
-  padding:4px 12px;font-size:11px;font-family:var(--mono);color:var(--ink2);
-  display:flex;align-items:center;gap:6px;
-}
+.pill{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:11px;font-family:var(--mono);color:var(--ink2);display:flex;align-items:center;gap:6px}
 .dot{width:7px;height:7px;border-radius:50%}
 .dot.on{background:var(--green);box-shadow:0 0 8px var(--green)}
 .dot.warn{background:var(--amber)}
-.dot.off{background:var(--ink3)}
 .blink{animation:blink 1.4s ease-in-out infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 .unt-grp{display:flex;background:var(--card);border:1px solid var(--border);border-radius:6px;overflow:hidden}
 .unt-btn{background:none;border:none;color:var(--ink3);padding:5px 12px;font-size:12px;font-family:var(--mono);cursor:pointer;transition:all .2s}
 .unt-btn.on{background:var(--green2);color:#fff}
-
-/* SIDEBAR */
-.sidebar{
-  background:var(--bg2);border-right:1px solid var(--border);
-  padding:16px 0;display:flex;flex-direction:column;gap:2px;overflow-y:auto;
-}
+.sidebar{background:var(--bg2);border-right:1px solid var(--border);padding:16px 0;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
 .nav-grp-label{font-size:10px;font-family:var(--mono);color:var(--ink3);letter-spacing:.1em;padding:12px 18px 6px;text-transform:uppercase}
-.nav-link{
-  display:flex;align-items:center;gap:10px;
-  padding:9px 18px;font-size:13px;color:var(--ink2);cursor:pointer;
-  transition:all .18s;border-left:2px solid transparent;
-}
+.nav-link{display:flex;align-items:center;gap:10px;padding:9px 18px;font-size:13px;color:var(--ink2);cursor:pointer;transition:all .18s;border-left:2px solid transparent}
 .nav-link:hover{background:var(--green3);color:var(--green)}
 .nav-link.active{background:var(--green3);color:var(--green);border-left-color:var(--green)}
-.nav-link svg{flex-shrink:0;opacity:.7}
-.nav-link.active svg{opacity:1}
 .nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:9px;font-family:var(--mono);padding:1px 7px;border-radius:10px}
 .sidebar-sep{height:1px;background:var(--border);margin:10px 16px}
 .node-status{padding:12px 18px;margin-top:auto}
 .ns-title{font-size:10px;font-family:var(--mono);color:var(--ink3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
-.ns-node{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:6px 10px;background:var(--card);border:1px solid var(--border);
-  border-radius:6px;margin-bottom:5px;font-size:11px;font-family:var(--mono);
-}
-.ns-name{color:var(--ink2)}
-.ns-val{color:var(--green)}
-
-/* MAIN */
+.ns-node{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:var(--card);border:1px solid var(--border);border-radius:6px;margin-bottom:5px;font-size:11px;font-family:var(--mono)}
+.ns-name{color:var(--ink2)}.ns-val{color:var(--green)}
 .main{overflow-y:auto;background:var(--bg)}
-
-/* VIEWS */
 .view{display:none;padding:22px 24px;animation:fi .3s ease}
 .view.active{display:block}
 @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .vhdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
 .vtitle{font-family:var(--cond);font-size:28px;font-weight:700;letter-spacing:.5px;color:var(--ink)}
 .vsub{font-size:12px;font-family:var(--mono);color:var(--ink3);margin-top:3px}
-
-/* GRID */
 .g2{display:grid;gap:14px}
 .g2.c6{grid-template-columns:repeat(6,1fr)}
 .g2.c4{grid-template-columns:repeat(4,1fr)}
-.g2.c3{grid-template-columns:repeat(3,1fr)}
-.g2.c2{grid-template-columns:1fr 1fr}
 .g2.c7{grid-template-columns:repeat(7,1fr)}
 @media(max-width:1200px){.g2.c6{grid-template-columns:repeat(3,1fr)}.g2.c7{grid-template-columns:repeat(4,1fr)}}
-
-/* CARDS */
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px}
 .card-title{font-size:11px;font-family:var(--mono);color:var(--ink3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:14px}
 .kpi{padding:14px 16px;position:relative;overflow:hidden;cursor:default;transition:border-color .2s,transform .2s}
 .kpi:hover{border-color:var(--border2);transform:translateY(-2px)}
-.kpi::after{content:'';position:absolute;right:-20px;top:-20px;width:80px;height:80px;border-radius:50%;background:var(--green3);transition:transform .3s}
-.kpi:hover::after{transform:scale(2)}
 .kpi-icon{font-size:20px;margin-bottom:8px}
 .kpi-lbl{font-size:10px;font-family:var(--mono);color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
 .kpi-val{font-family:var(--cond);font-size:26px;font-weight:700;line-height:1;position:relative;z-index:1}
 .kpi-sub{font-size:11px;font-family:var(--mono);color:var(--ink2);margin-top:4px;position:relative;z-index:1}
-.kpi-trend{font-size:10px;font-family:var(--mono);margin-top:6px;display:flex;align-items:center;gap:3px;position:relative;z-index:1}
-.up{color:var(--red)}.dn{color:var(--green)}.nc{color:var(--ink3)}
-
-/* HERO ROW */
-.hero{
-  background:var(--card2);border:1px solid var(--border2);border-radius:var(--r);
-  padding:20px 24px;display:flex;align-items:center;gap:24px;margin-bottom:14px;
-  position:relative;overflow:hidden;
-}
-.hero::before{
-  content:'';position:absolute;right:-40px;top:-40px;
-  width:220px;height:220px;border-radius:50%;
-  background:radial-gradient(circle,rgba(61,220,110,.07),transparent 70%);
-}
+.kpi-trend{font-size:10px;font-family:var(--mono);margin-top:6px;color:var(--ink3)}
+.hero{background:var(--card2);border:1px solid var(--border2);border-radius:var(--r);padding:20px 24px;display:flex;align-items:center;gap:24px;margin-bottom:14px;position:relative;overflow:hidden}
 .hero-temp{font-family:var(--cond);font-size:68px;font-weight:700;line-height:1;color:var(--green)}
 .hero-info{flex:1}
 .hero-city{font-family:var(--cond);font-size:22px;font-weight:600;letter-spacing:.5px}
@@ -152,15 +68,8 @@ body{display:grid;grid-template-columns:230px 1fr;grid-template-rows:52px 1fr}
 .hero-stat b{color:var(--green);font-weight:600}
 .hero-right{text-align:right}
 .hero-hl{font-size:13px;font-family:var(--mono);color:var(--ink2);line-height:2}
-
-/* CHARTS */
 .chart-wrap{position:relative;min-width:0}
-
-/* FORECAST */
-.fc-card{
-  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
-  padding:14px 12px;text-align:center;transition:all .2s;cursor:default;
-}
+.fc-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 12px;text-align:center;transition:all .2s;cursor:default}
 .fc-card:hover{border-color:var(--green);transform:translateY(-3px)}
 .fc-day{font-size:10px;font-family:var(--mono);color:var(--ink3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
 .fc-ico{font-size:26px;margin-bottom:8px}
@@ -168,35 +77,24 @@ body{display:grid;grid-template-columns:230px 1fr;grid-template-rows:52px 1fr}
 .fc-lo{font-size:12px;font-family:var(--mono);color:var(--ink3);margin-top:1px}
 .fc-desc{font-size:10px;color:var(--ink2);margin-top:6px}
 .fc-pp{font-size:10px;font-family:var(--mono);color:var(--blue);margin-top:3px}
-
-/* IoT SENSORS */
-.sensor-card{
-  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
-  padding:16px;transition:border-color .2s;
-}
+.sensor-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px}
 .sensor-card.offline{opacity:.45}
 .sc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
 .sc-id{font-size:10px;font-family:var(--mono);color:var(--ink3)}
 .sc-status{font-size:10px;font-family:var(--mono);padding:2px 8px;border-radius:10px}
-.sc-status.on{background:rgba(61,220,110,.15);color:var(--green)}
-.sc-status.off{background:rgba(255,94,94,.1);color:var(--red)}
+.sc-status.on{background:rgba(79,195,255,.15);color:var(--green)}
+.sc-status.off{background:rgba(255,107,107,.1);color:var(--red)}
 .sc-loc{font-family:var(--cond);font-size:15px;font-weight:600;margin-bottom:8px}
 .sc-reading{font-family:var(--cond);font-size:30px;font-weight:700;color:var(--green)}
 .sc-type{font-size:11px;font-family:var(--mono);color:var(--ink2);margin-top:3px}
 .sc-bar{height:3px;background:var(--bg3);border-radius:2px;margin-top:12px;overflow:hidden}
 .sc-fill{height:100%;background:linear-gradient(90deg,var(--green2),var(--green));border-radius:2px;transition:width .6s}
 .sc-meta{display:flex;justify-content:space-between;margin-top:6px;font-size:10px;font-family:var(--mono);color:var(--ink3)}
-/* RSSI meter */
 .rssi{display:flex;align-items:flex-end;gap:2px;height:14px}
 .rssi-bar{width:4px;border-radius:1px;background:var(--green);opacity:.3}
 .rssi-bar.on{opacity:1}
-
-/* ML MODEL */
 .ml-arch{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:18px}
-.ml-box{
-  background:var(--bg3);border:1px solid var(--border2);border-radius:7px;
-  padding:10px 14px;font-size:12px;font-family:var(--mono);color:var(--green);text-align:center;
-}
+.ml-box{background:var(--bg3);border:1px solid var(--border2);border-radius:7px;padding:10px 14px;font-size:12px;font-family:var(--mono);color:var(--green);text-align:center}
 .ml-box.input{border-color:rgba(79,195,255,.4);color:var(--blue)}
 .ml-box.output{border-color:rgba(176,132,255,.4);color:var(--purple)}
 .ml-box small{display:block;color:var(--ink3);font-size:10px;margin-top:2px}
@@ -208,104 +106,64 @@ body{display:grid;grid-template-columns:230px 1fr;grid-template-rows:52px 1fr}
 .s3-flow{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:14px;flex-wrap:wrap}
 .s3-node{background:var(--card2);border:1px solid var(--border2);border-radius:6px;padding:8px 14px;font-size:11px;font-family:var(--mono);text-align:center}
 .s3-node .icon{font-size:18px;display:block;margin-bottom:3px}
-.s3-node .lbl{color:var(--ink2)}
-.s3-node .val{color:var(--green);font-size:10px;margin-top:2px}
+.s3-node .lbl{color:var(--ink2)}.s3-node .val{color:var(--green);font-size:10px;margin-top:2px}
 .s3-sep{color:var(--ink3);font-size:12px}
 .ml-input-row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-top:14px}
 .ml-field{display:flex;flex-direction:column;gap:5px}
 .ml-field label{font-size:10px;font-family:var(--mono);color:var(--ink3);text-transform:uppercase;letter-spacing:.05em}
-.ml-field input{
-  background:var(--bg3);border:1px solid var(--border2);color:var(--ink);
-  padding:8px 12px;border-radius:6px;font-size:13px;font-family:var(--mono);
-  width:110px;outline:none;transition:border-color .2s;
-}
+.ml-field input{background:var(--bg3);border:1px solid var(--border2);color:var(--ink);padding:8px 12px;border-radius:6px;font-size:13px;font-family:var(--mono);width:110px;outline:none;transition:border-color .2s}
 .ml-field input:focus{border-color:var(--green)}
-.btn-green{
-  background:var(--green2);color:#fff;border:none;
-  padding:9px 20px;border-radius:6px;font-size:12px;font-family:var(--mono);
-  cursor:pointer;transition:all .2s;
-}
+.btn-green{background:var(--green2);color:#fff;border:none;padding:9px 20px;border-radius:6px;font-size:12px;font-family:var(--mono);cursor:pointer;transition:all .2s}
 .btn-green:hover{background:var(--green);transform:translateY(-1px)}
-.ml-result{
-  margin-top:14px;background:var(--bg3);border:1px solid var(--border2);border-left:3px solid var(--green);
-  border-radius:8px;padding:14px;font-family:var(--mono);font-size:12px;color:var(--ink);
-  display:none;line-height:2;
-}
-.ml-result.show{display:block}
-
-/* ALERTS */
-.alert-item{
-  background:var(--card);border:1px solid var(--border);border-radius:8px;
-  padding:14px 18px;display:flex;align-items:center;gap:14px;margin-bottom:10px;
-  transition:border-color .2s;
-}
+.ml-result{margin-top:14px;background:var(--bg3);border:1px solid var(--border2);border-left:3px solid var(--green);border-radius:8px;padding:14px;font-family:var(--mono);font-size:12px;color:var(--ink);display:none;line-height:2}
+.alert-item{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;align-items:center;gap:14px;margin-bottom:10px}
 .alert-item.crit{border-left:3px solid var(--red)}
 .alert-item.warn{border-left:3px solid var(--amber)}
 .alert-item.info{border-left:3px solid var(--blue)}
 .alert-item.ok{border-left:3px solid var(--green)}
 .a-badge{font-size:10px;font-family:var(--mono);font-weight:600;padding:3px 10px;border-radius:10px;white-space:nowrap}
-.crit .a-badge{background:rgba(255,94,94,.15);color:var(--red)}
-.warn .a-badge{background:rgba(245,200,66,.12);color:var(--amber)}
+.crit .a-badge{background:rgba(255,107,107,.15);color:var(--red)}
+.warn .a-badge{background:rgba(255,213,79,.12);color:var(--amber)}
 .info .a-badge{background:rgba(79,195,255,.1);color:var(--blue)}
-.ok .a-badge{background:rgba(61,220,110,.1);color:var(--green)}
+.ok .a-badge{background:rgba(79,195,255,.08);color:var(--green)}
 .a-title{font-size:13px;font-weight:600}
 .a-desc{font-size:12px;font-family:var(--mono);color:var(--ink2);margin-top:2px}
 .a-time{font-size:10px;font-family:var(--mono);color:var(--ink3);margin-left:auto;white-space:nowrap}
-
-/* S3 EXPLORER */
 .s3-table{width:100%;border-collapse:collapse;font-size:12px;font-family:var(--mono)}
 .s3-table th{text-align:left;padding:8px 12px;color:var(--ink3);text-transform:uppercase;font-size:10px;letter-spacing:.06em;border-bottom:1px solid var(--border);font-weight:400}
-.s3-table td{padding:9px 12px;border-bottom:1px solid rgba(80,200,100,.05);color:var(--ink2)}
+.s3-table td{padding:9px 12px;border-bottom:1px solid rgba(79,195,255,.05);color:var(--ink2)}
 .s3-table tr:hover td{background:var(--green3);color:var(--ink)}
-.s3-size{color:var(--ink3)}
-.s3-new{color:var(--green)}
-.s3-path{color:var(--blue)}
+.s3-size{color:var(--ink3)}.s3-new{color:var(--green)}.s3-path{color:var(--blue)}
 .s3-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
 .s3-stat{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 16px}
 .s3-stat-lbl{font-size:10px;font-family:var(--mono);color:var(--ink3);text-transform:uppercase;margin-bottom:5px}
 .s3-stat-val{font-family:var(--cond);font-size:20px;font-weight:700;color:var(--green)}
 .s3-progress{height:4px;background:var(--bg3);border-radius:2px;margin-top:8px;overflow:hidden}
 .s3-prog-fill{height:100%;background:linear-gradient(90deg,var(--green2),var(--green))}
-
-/* MAP */
-.map-wrap{
-  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
-  height:420px;position:relative;overflow:hidden;margin-bottom:14px;
-}
-.map-bg{width:100%;height:100%;object-fit:cover;opacity:.5}
+.map-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--r);height:420px;position:relative;overflow:hidden;margin-bottom:14px}
 .map-ctrl{position:absolute;top:14px;right:14px;display:flex;gap:6px}
-.map-btn{background:rgba(4,16,10,.9);border:1px solid var(--border);color:var(--ink2);font-size:11px;font-family:var(--mono);padding:5px 12px;border-radius:5px;cursor:pointer;transition:all .2s}
+.map-btn{background:rgba(2,11,22,.9);border:1px solid var(--border);color:var(--ink2);font-size:11px;font-family:var(--mono);padding:5px 12px;border-radius:5px;cursor:pointer;transition:all .2s}
 .map-btn.on,.map-btn:hover{background:var(--green2);color:#fff;border-color:var(--green)}
 .map-city{position:absolute;cursor:pointer}
-.map-city-inner{
-  background:rgba(4,16,10,.85);border:1px solid var(--border2);
-  border-radius:8px;padding:5px 10px;font-size:10px;font-family:var(--mono);
-  color:var(--green);transition:all .2s;white-space:nowrap;
-}
+.map-city-inner{background:rgba(2,11,22,.85);border:1px solid var(--border2);border-radius:8px;padding:5px 10px;font-size:10px;font-family:var(--mono);color:var(--green);transition:all .2s;white-space:nowrap}
 .map-city:hover .map-city-inner{background:var(--green2);color:#fff;transform:scale(1.05)}
 .map-city-inner .ct{color:var(--ink2);font-size:9px}
-
-/* SCROLLBAR */
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
-
-/* MISC */
 .row{display:flex;gap:14px;margin-bottom:14px}
 .row .card{flex:1;min-width:0}
 .sep{height:14px}
 </style>
 </head>
 <body>
-
-<!-- TOP BAR -->
 <header class="topbar">
   <div class="brand">NIMBUS<span>CAST</span></div>
   <div class="tb-search">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    <input type="text" placeholder="Search city or lat,lon…" id="cityInput" onkeydown="if(event.key==='Enter')doSearch()"/>
+    <input type="text" placeholder="Search city…" id="cityInput" onkeydown="if(event.key==='Enter')doSearch()"/>
   </div>
   <div class="tb-right">
-    <div class="pill"><div class="dot on blink"></div><span id="iotStatus">IoT Live</span></div>
+    <div class="pill"><div class="dot on blink"></div><span>IoT Live</span></div>
     <div class="pill"><div class="dot" id="s3Dot" style="background:var(--amber)"></div><span id="s3Status">S3 Connecting</span></div>
     <div class="pill"><div class="dot on"></div><span>ML Ready</span></div>
     <div class="unt-grp">
@@ -315,8 +173,6 @@ body{display:grid;grid-template-columns:230px 1fr;grid-template-rows:52px 1fr}
     <div class="pill" id="lastUpdPill">Updating…</div>
   </div>
 </header>
-
-<!-- SIDEBAR -->
 <aside class="sidebar">
   <span class="nav-grp-label">Monitor</span>
   <a class="nav-link active" data-v="dashboard" onclick="nav('dashboard')">
@@ -331,7 +187,6 @@ body{display:grid;grid-template-columns:230px 1fr;grid-template-rows:52px 1fr}
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
     Weather Map
   </a>
-
   <span class="nav-grp-label">IoT & Data</span>
   <a class="nav-link" data-v="sensors" onclick="nav('sensors')">
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M6.343 6.343A8 8 0 1 0 17.657 17.657"/><path d="M9.172 9.172A4 4 0 1 0 14.828 14.828"/></svg>
@@ -345,14 +200,12 @@ body{display:grid;grid-template-columns:230px 1fr;grid-template-rows:52px 1fr}
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
     ML Model (LSTM)
   </a>
-
   <span class="nav-grp-label">Alerts</span>
   <a class="nav-link" data-v="alerts" onclick="nav('alerts')">
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
     Alerts & SNS
     <span class="nav-badge" id="alertBadge">3</span>
   </a>
-
   <div class="sidebar-sep"></div>
   <div class="node-status">
     <div class="ns-title">Live ESP Nodes</div>
@@ -360,15 +213,11 @@ body{display:grid;grid-template-columns:230px 1fr;grid-template-rows:52px 1fr}
     <div class="ns-node"><span class="ns-name">nimbus-node-002</span><span class="ns-val" style="color:var(--ink3)">OFFLINE</span></div>
   </div>
 </aside>
-
-<!-- MAIN -->
 <main class="main">
-
-<!-- DASHBOARD -->
 <div class="view active" id="v-dashboard">
   <div class="vhdr">
     <div><div class="vtitle" id="cityName">New Delhi, IN</div><div class="vsub" id="curDate">Loading…</div></div>
-    <button class="btn-green" onclick="refreshAll()" style="margin-top:4px">↻ Refresh</button>
+    <button class="btn-green" onclick="refreshAll()">↻ Refresh</button>
   </div>
   <div class="hero">
     <div class="hero-temp" id="heroTemp">--°</div>
@@ -389,16 +238,14 @@ body{display:grid;grid-template-columns:230px 1fr;grid-template-rows:52px 1fr}
       <div class="hero-hl">Vis: <b id="heroVis">--</b> km</div>
     </div>
   </div>
-
   <div class="g2 c6" style="margin-bottom:14px">
-    <div class="card kpi"><div class="kpi-icon">🌡️</div><div class="kpi-lbl">Temperature</div><div class="kpi-val" id="kT">--</div><div class="kpi-sub" id="kFL">Feels --</div><div class="kpi-trend nc" id="kTT">↔ stable</div></div>
+    <div class="card kpi"><div class="kpi-icon">🌡️</div><div class="kpi-lbl">Temperature</div><div class="kpi-val" id="kT">--</div><div class="kpi-sub" id="kFL">Feels --</div><div class="kpi-trend">↔ stable</div></div>
     <div class="card kpi"><div class="kpi-icon">💧</div><div class="kpi-lbl">Humidity</div><div class="kpi-val" id="kH">--%</div><div class="kpi-sub" id="kDew">Dew --</div></div>
     <div class="card kpi"><div class="kpi-icon">🌬️</div><div class="kpi-lbl">Wind</div><div class="kpi-val" id="kW">--</div><div class="kpi-sub" id="kGust">Gust --</div></div>
     <div class="card kpi"><div class="kpi-icon">📊</div><div class="kpi-lbl">Pressure</div><div class="kpi-val" id="kP">--</div><div class="kpi-sub">hPa</div></div>
     <div class="card kpi"><div class="kpi-icon">☀️</div><div class="kpi-lbl">UV Index</div><div class="kpi-val" id="kUV">--</div><div class="kpi-sub" id="kUVL">--</div></div>
     <div class="card kpi"><div class="kpi-icon">🌿</div><div class="kpi-lbl">AQI</div><div class="kpi-val" id="kAQI">--</div><div class="kpi-sub" id="kAQIS">ESP sensor</div></div>
   </div>
-
   <div class="row">
     <div class="card chart-wrap" style="flex:2"><div class="card-title">24h Temperature — ESP Node + OpenWeatherMap</div><canvas id="cTemp" height="130"></canvas></div>
     <div class="card chart-wrap" style="flex:1"><div class="card-title">Precipitation Chance</div><canvas id="cPrecip" height="130"></canvas></div>
@@ -408,45 +255,39 @@ body{display:grid;grid-template-columns:230px 1fr;grid-template-rows:52px 1fr}
     <div class="card chart-wrap" style="flex:2"><div class="card-title">Humidity & Dew Point</div><canvas id="cHum" height="160"></canvas></div>
   </div>
 </div>
-
-<!-- FORECAST -->
 <div class="view" id="v-forecast">
   <div class="vhdr"><div><div class="vtitle">7-Day Forecast</div><div class="vsub">ML-enhanced extended outlook</div></div></div>
   <div class="g2 c7" id="fcGrid" style="margin-bottom:16px"></div>
-  <div class="row">
-    <div class="card chart-wrap" style="flex:1"><div class="card-title">Weekly High / Low Band</div><canvas id="cWeek" height="190"></canvas></div>
-  </div>
+  <div class="row"><div class="card chart-wrap" style="flex:1"><div class="card-title">Weekly High / Low Band</div><canvas id="cWeek" height="190"></canvas></div></div>
 </div>
-
-<!-- MAP -->
 <div class="view" id="v-map">
   <div class="vhdr"><div><div class="vtitle">Global Weather Map</div><div class="vsub">Real-time OpenWeatherMap layers</div></div></div>
-  <div class="map-wrap" id="mapWrap">
-    <div id="mapCanvas" style="width:100%;height:100%;position:relative;background:#071510"></div>
+  <div class="map-wrap">
+    <div id="mapCanvas" style="width:100%;height:100%;position:relative;background:#061525"></div>
     <div class="map-ctrl">
-      <button class="map-btn on" onclick="setLayer(this,'temp')">Temp</button>
-      <button class="map-btn" onclick="setLayer(this,'precipitation_new')">Rain</button>
-      <button class="map-btn" onclick="setLayer(this,'wind_new')">Wind</button>
-      <button class="map-btn" onclick="setLayer(this,'clouds_new')">Cloud</button>
+      <button class="map-btn on" onclick="setLayer(this)">Temp</button>
+      <button class="map-btn" onclick="setLayer(this)">Rain</button>
+      <button class="map-btn" onclick="setLayer(this)">Wind</button>
+      <button class="map-btn" onclick="setLayer(this)">Cloud</button>
     </div>
   </div>
 </div>
-
-<!-- SENSORS -->
 <div class="view" id="v-sensors">
-  <div class="vhdr"><div><div class="vtitle">ESP8266 / ESP32 Node Network</div><div class="vsub">MQTT → AWS IoT Core → Lambda → S3</div></div></div>
+  <div class="vhdr"><div><div class="vtitle">ESP8266/ESP32 Node Network</div><div class="vsub">MQTT → AWS IoT Core → Lambda → S3 (nimbus-weather-*) + DynamoDB (nimbus-sensor-data)</div></div></div>
   <div class="card" style="margin-bottom:14px;padding:14px 20px">
-    <div style="font-size:11px;font-family:var(--mono);color:var(--ink3);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em">Data Pipeline</div>
+    <div style="font-size:11px;font-family:var(--mono);color:var(--ink3);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em">CloudFormation Stack Pipeline</div>
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:11px;font-family:var(--mono)">
       <span style="background:var(--bg3);border:1px solid rgba(79,195,255,.3);color:var(--blue);padding:5px 12px;border-radius:5px">📡 ESP8266/32<br/><small style="color:var(--ink3)">DHT22+BMP280</small></span>
-      <span style="color:var(--ink3)">→ MQTT 8883 →</span>
-      <span style="background:var(--bg3);border:1px solid var(--border2);color:var(--green);padding:5px 12px;border-radius:5px">☁️ AWS IoT Core<br/><small style="color:var(--ink3)">Topic: nimbus/sensors</small></span>
-      <span style="color:var(--ink3)">→ IoT Rule →</span>
-      <span style="background:var(--bg3);border:1px solid var(--border2);color:var(--amber);padding:5px 12px;border-radius:5px">λ Lambda<br/><small style="color:var(--ink3)">nimbus-iot-ingestion</small></span>
-      <span style="color:var(--ink3)">→ PutObject →</span>
-      <span style="background:var(--bg3);border:1px solid var(--border2);color:var(--purple);padding:5px 12px;border-radius:5px">🗄️ S3 Bucket<br/><small style="color:var(--ink3)">raw/year/month/day/</small></span>
-      <span style="color:var(--ink3)">+ →</span>
-      <span style="background:var(--bg3);border:1px solid var(--border2);color:var(--ink2);padding:5px 12px;border-radius:5px">🗃️ DynamoDB<br/><small style="color:var(--ink3)">hot cache TTL:7d</small></span>
+      <span style="color:var(--ink3)">→ MQTT →</span>
+      <span style="background:var(--bg3);border:1px solid var(--border2);color:var(--green);padding:5px 12px;border-radius:5px">☁️ AWS IoT Core<br/><small style="color:var(--ink3)">nimbus/sensors</small></span>
+      <span style="color:var(--ink3)">→ Rule →</span>
+      <span style="background:var(--bg3);border:1px solid var(--border2);color:var(--amber);padding:5px 12px;border-radius:5px">λ nimbus-lambda<br/><small style="color:var(--ink3)">API Gateway</small></span>
+      <span style="color:var(--ink3)">→</span>
+      <span style="background:var(--bg3);border:1px solid var(--border2);color:var(--purple);padding:5px 12px;border-radius:5px">🗄️ S3 Bucket<br/><small style="color:var(--ink3)">nimbus-weather-*</small></span>
+      <span style="color:var(--ink3)">+</span>
+      <span style="background:var(--bg3);border:1px solid var(--border2);color:var(--ink2);padding:5px 12px;border-radius:5px">🗃️ DynamoDB<br/><small style="color:var(--ink3)">nimbus-sensor-data</small></span>
+      <span style="color:var(--ink3)">→ SNS →</span>
+      <span style="background:var(--bg3);border:1px solid var(--border2);color:var(--red);padding:5px 12px;border-radius:5px">📧 nimbus-alerts<br/><small style="color:var(--ink3)">saraswatojas263@gmail.com</small></span>
     </div>
   </div>
   <div class="g2 c4" id="sensorGrid"></div>
@@ -456,10 +297,8 @@ body{display:grid;grid-template-columns:230px 1fr;grid-template-rows:52px 1fr}
     <div class="card chart-wrap" style="flex:1"><div class="card-title">Node 001 — Humidity & Pressure</div><canvas id="cESP2" height="150"></canvas></div>
   </div>
 </div>
-
-<!-- S3 -->
 <div class="view" id="v-s3">
-  <div class="vhdr"><div><div class="vtitle">AWS S3 Data Lake</div><div class="vsub">nimbus-weather-data — Partitioned by year/month/day/hour</div></div></div>
+  <div class="vhdr"><div><div class="vtitle">AWS S3 Data Lake</div><div class="vsub">nimbus-weather-[accountId]-[region] — deployed via CloudFormation</div></div></div>
   <div class="s3-stats">
     <div class="s3-stat"><div class="s3-stat-lbl">Total Objects</div><div class="s3-stat-val" id="s3Objs">--</div><div class="s3-progress"><div class="s3-prog-fill" style="width:72%"></div></div></div>
     <div class="s3-stat"><div class="s3-stat-lbl">Storage Used</div><div class="s3-stat-val" id="s3Size">--</div><div class="s3-progress"><div class="s3-prog-fill" style="width:18%"></div></div></div>
@@ -467,21 +306,16 @@ body{display:grid;grid-template-columns:230px 1fr;grid-template-rows:52px 1fr}
     <div class="s3-stat"><div class="s3-stat-lbl">Lambda Invocations</div><div class="s3-stat-val" id="s3Lambda">--</div><div class="s3-progress"><div class="s3-prog-fill" style="width:60%"></div></div></div>
   </div>
   <div class="card" style="margin-bottom:14px">
-    <div class="card-title">Bucket Structure — s3://nimbus-weather-data/</div>
-    <table class="s3-table" id="s3Table">
-      <thead><tr><th>Path</th><th>Type</th><th>Objects</th><th>Size</th><th>Last Modified</th><th>Storage Class</th></tr></thead>
-      <tbody id="s3Body"></tbody>
-    </table>
+    <div class="card-title">Bucket Structure — s3://nimbus-weather-[accountId]-[region]/</div>
+    <table class="s3-table"><thead><tr><th>Path</th><th>Type</th><th>Objects</th><th>Size</th><th>Last Modified</th><th>Storage Class</th></tr></thead><tbody id="s3Body"></tbody></table>
   </div>
   <div class="row">
     <div class="card chart-wrap" style="flex:1"><div class="card-title">Daily S3 Write Volume</div><canvas id="cS3" height="160"></canvas></div>
     <div class="card chart-wrap" style="flex:1"><div class="card-title">Storage by Prefix</div><canvas id="cS3pie" height="160"></canvas></div>
   </div>
 </div>
-
-<!-- ML -->
 <div class="view" id="v-ml">
-  <div class="vhdr"><div><div class="vtitle">LSTM ML Forecast Engine</div><div class="vsub">Bidirectional LSTM — trained on ESP sensor data from S3</div></div></div>
+  <div class="vhdr"><div><div class="vtitle">LSTM ML Forecast Engine</div><div class="vsub">Bidirectional LSTM — trained on ESP sensor data stored in S3</div></div></div>
   <div class="s3-flow">
     <div class="s3-node"><span class="icon">🗄️</span><span class="lbl">S3 daily/*.ndjson</span><span class="val">Training data</span></div>
     <span class="s3-sep">→</span>
@@ -498,7 +332,7 @@ body{display:grid;grid-template-columns:230px 1fr;grid-template-rows:52px 1fr}
     <span class="ml-arr">→</span>
     <div class="ml-box">BiLSTM(128)<small>return_sequences=True</small></div>
     <span class="ml-arr">→</span>
-    <div class="ml-box">Dropout(0.2)<br>BatchNorm<small></small></div>
+    <div class="ml-box">Dropout(0.2)<small>BatchNorm</small></div>
     <span class="ml-arr">→</span>
     <div class="ml-box">BiLSTM(64)<small>return_sequences=False</small></div>
     <span class="ml-arr">→</span>
@@ -516,9 +350,7 @@ body{display:grid;grid-template-columns:230px 1fr;grid-template-rows:52px 1fr}
     <div class="card chart-wrap" style="flex:2"><div class="card-title">Actual vs LSTM Predicted — from ESP Sensor readings</div><canvas id="cML" height="200"></canvas></div>
     <div class="card chart-wrap" style="flex:1"><div class="card-title">Feature Importance</div><canvas id="cFeat" height="200"></canvas></div>
   </div>
-  <div class="row">
-    <div class="card chart-wrap" style="flex:1"><div class="card-title">95% Confidence Interval (7-day)</div><canvas id="cConf" height="160"></canvas></div>
-  </div>
+  <div class="row"><div class="card chart-wrap" style="flex:1"><div class="card-title">95% Confidence Interval (7-day)</div><canvas id="cConf" height="160"></canvas></div></div>
   <div class="card">
     <div class="card-title">Run Custom LSTM Prediction</div>
     <div class="ml-input-row">
@@ -532,139 +364,180 @@ body{display:grid;grid-template-columns:230px 1fr;grid-template-rows:52px 1fr}
     <div class="ml-result" id="mlOut"></div>
   </div>
 </div>
-
-<!-- ALERTS -->
 <div class="view" id="v-alerts">
   <div class="vhdr">
-    <div><div class="vtitle">Alerts & AWS SNS</div><div class="vsub">Threshold monitoring from ESP sensors</div></div>
+    <div><div class="vtitle">Alerts & AWS SNS</div><div class="vsub">Threshold monitoring → SNS (nimbus-alerts) → saraswatojas263@gmail.com</div></div>
     <button class="btn-green" onclick="addAlert()">+ Add Rule</button>
   </div>
   <div id="alertList"></div>
   <div class="sep"></div>
-  <div class="row">
-    <div class="card chart-wrap" style="flex:1"><div class="card-title">Alert History (30 days)</div><canvas id="cAlert" height="150"></canvas></div>
-  </div>
+  <div class="row"><div class="card chart-wrap" style="flex:1"><div class="card-title">Alert History (30 days)</div><canvas id="cAlert" height="150"></canvas></div></div>
 </div>
-
 </main>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script>
-// ── STATE ─────────────────────────────────────────────────────
-const S = {
-  unit:'C', city:'New Delhi', lat:28.6139, lon:77.2090,
-  cur:null, fore:null, air:null,
-  charts:{}, timer:null,
-  espReadings:[], s3Counter:0,
-};
-const API_KEY = '4ca15a4e9d5494b9bf97d1bac1827b05';
-const BASE = 'https://api.openweathermap.org/data/2.5';
+// CONFIG
+const API_KEY='6d343990cd517dadb80003a215620139';
+const BASE='https://api.openweathermap.org/data/2.5';
+const LAMBDA='https://dgtmofz0y7.execute-api.ap-south-1.amazonaws.com/dev/nimbus-lambda';
 
-// ── BOOT ──────────────────────────────────────────────────────
-window.onload = ()=>{
-  setDate();
-  simulateESPStream();
-  simulateS3();
-  fetchAll().catch(()=>{ mockData(); initCharts(); renderFc(); renderSensors(); renderS3(); renderAlerts(); });
+// STATE — chart instances NEVER destroyed after first build
+const S={
+  unit:'C',city:'New Delhi',lat:28.6139,lon:77.2090,
+  cur:null,fore:null,air:null,espReadings:[],s3Counter:0,
+  TC:null,PC:null,HC:null,WC:null  // Temp,Precip,Hum,Week chart instances
 };
 
-function setDate(){
-  document.getElementById('curDate').textContent = new Date().toLocaleString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'});
-}
+// BOOT
+window.onload=()=>{
+  setDate(); simulateESP(); simulateS3();
+  fetchAll().catch(()=>{mockData();buildCharts();renderFc();renderSensors();renderS3();renderAlerts();});
+};
 setInterval(setDate,60000);
 
-// ── NAV ───────────────────────────────────────────────────────
+// UTILS
+function setDate(){document.getElementById('curDate').textContent=new Date().toLocaleString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'});}
+function td(c){return S.unit==='F'?Math.round(c*9/5+32):Math.round(c);}
+function us(){return S.unit==='F'?'°F':'°C';}
+function gc(id){const c=document.getElementById(id);return c?c.getContext('2d'):null;}
+
+// UNIT
+function setUnit(u){
+  S.unit=u;
+  document.getElementById('btnC').classList.toggle('on',u==='C');
+  document.getElementById('btnF').classList.toggle('on',u==='F');
+  if(S.cur)updateDash();
+  // Update chart data only - no rebuild!
+  updateChartData();
+}
+
+// NAV
 function nav(v){
   document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('.nav-link').forEach(x=>x.classList.remove('active'));
   document.getElementById('v-'+v).classList.add('active');
-  document.querySelector(`[data-v="${v}"]`).classList.add('active');
-  if(v==='ml') renderMLCharts();
-  if(v==='s3') renderS3Charts();
-  if(v==='sensors') renderESPCharts();
-  if(v==='alerts') renderAlerts();
-  if(v==='forecast') renderFc();
-  if(v==='map') renderMap();
+  document.querySelector('[data-v="'+v+'"]').classList.add('active');
+  if(v==='ml')renderMLCharts();
+  if(v==='s3')renderS3Charts();
+  if(v==='sensors')renderESPCharts();
+  if(v==='alerts')renderAlerts();
+  if(v==='forecast'){renderFc();if(!S.WC)buildWeekChart();}
+  if(v==='map')renderMap();
 }
 
-// ── UNIT ─────────────────────────────────────────────────────
-function setUnit(u){ S.unit=u; document.getElementById('btnC').classList.toggle('on',u==='C'); document.getElementById('btnF').classList.toggle('on',u==='F'); if(S.cur) updateDash(); }
-function td(c){ return S.unit==='F'?Math.round(c*9/5+32):Math.round(c); }
-function us(){ return S.unit==='F'?'°F':'°C'; }
-
-// ── ESP STREAM SIMULATOR ─────────────────────────────────────
-function simulateESPStream(){
-  const base = 30;
+// ESP SIMULATOR
+function simulateESP(){
   let i=0;
   setInterval(()=>{
-    const t = base + Math.sin(i*0.26)*5 + (Math.random()-.5)*1.2;
-    const h = 60 + Math.sin(i*0.15)*15 + (Math.random()-.5)*3;
-    const p = 1010 + Math.sin(i*0.08)*4 + (Math.random()-.5)*.5;
-    S.espReadings.push({ t:Date.now()/1000, temperature:parseFloat(t.toFixed(1)), humidity:parseFloat(h.toFixed(1)), pressure:parseFloat(p.toFixed(1)), air_quality_ppm:450+Math.random()*300, heat_index:t+(h-40)*0.1 });
-    if(S.espReadings.length>200) S.espReadings.shift();
-    document.getElementById('nsTemp').textContent = td(t)+us();
+    const t=30+Math.sin(i*0.26)*5+(Math.random()-.5)*1.2;
+    const h=60+Math.sin(i*0.15)*15+(Math.random()-.5)*3;
+    const p=1010+Math.sin(i*0.08)*4+(Math.random()-.5)*.5;
+    S.espReadings.push({ts:Date.now()/1000,temperature:parseFloat(t.toFixed(1)),humidity:parseFloat(h.toFixed(1)),pressure:parseFloat(p.toFixed(1)),air_quality_ppm:450+Math.random()*300,heat_index:t+(h-40)*0.1});
+    if(S.espReadings.length>200)S.espReadings.shift();
+    document.getElementById('nsTemp').textContent=td(t)+us();
     i++;
-  }, 5000);
+  },5000);
 }
 
-// ── S3 SIMULATOR ─────────────────────────────────────────────
+// S3 SIMULATOR
 function simulateS3(){
   setTimeout(()=>{
     document.getElementById('s3Dot').style.background='var(--green)';
     document.getElementById('s3Dot').classList.add('on');
     document.getElementById('s3Status').textContent='S3 Active';
-    S.s3Counter = 1240 + Math.floor(Math.random()*200);
+    S.s3Counter=1240+Math.floor(Math.random()*200);
     updateS3Stats();
-  }, 2000);
-  setInterval(()=>{ S.s3Counter+=2; updateS3Stats(); }, 30000);
+  },2000);
+  setInterval(()=>{S.s3Counter+=2;updateS3Stats();},30000);
 }
-
 function updateS3Stats(){
-  document.getElementById('s3Objs').textContent = S.s3Counter.toLocaleString();
-  document.getElementById('s3Size').textContent = (S.s3Counter * 0.38 / 1024).toFixed(2)+' MB';
-  document.getElementById('s3Today').textContent = Math.floor(S.s3Counter * 0.08);
-  document.getElementById('s3Lambda').textContent = Math.floor(S.s3Counter * 0.95);
+  document.getElementById('s3Objs').textContent=S.s3Counter.toLocaleString();
+  document.getElementById('s3Size').textContent=(S.s3Counter*0.38/1024).toFixed(2)+' MB';
+  document.getElementById('s3Today').textContent=Math.floor(S.s3Counter*0.08);
+  document.getElementById('s3Lambda').textContent=Math.floor(S.s3Counter*0.95);
 }
 
-// ── FETCH ─────────────────────────────────────────────────────
+// OWM FETCH
 async function fetchAll(){
-  const r1=await fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(S.city)}&limit=1&appid=${API_KEY}`);
-  const g=await r1.json(); if(g[0]){S.lat=g[0].lat;S.lon=g[0].lon;}
-  const [r2,r3,r4]=await Promise.all([
-    fetch(`${BASE}/weather?lat=${S.lat}&lon=${S.lon}&appid=${API_KEY}&units=metric`).then(r=>r.json()),
-    fetch(`${BASE}/forecast?lat=${S.lat}&lon=${S.lon}&appid=${API_KEY}&units=metric&cnt=56`).then(r=>r.json()),
-    fetch(`${BASE}/air_pollution?lat=${S.lat}&lon=${S.lon}&appid=${API_KEY}`).then(r=>r.json()),
+  const geo=await fetch('https://api.openweathermap.org/geo/1.0/direct?q='+encodeURIComponent(S.city)+'&limit=1&appid='+API_KEY).then(r=>r.json());
+  if(geo[0]){S.lat=geo[0].lat;S.lon=geo[0].lon;}
+  const [cur,fore,air]=await Promise.all([
+    fetch(BASE+'/weather?lat='+S.lat+'&lon='+S.lon+'&appid='+API_KEY+'&units=metric').then(r=>r.json()),
+    fetch(BASE+'/forecast?lat='+S.lat+'&lon='+S.lon+'&appid='+API_KEY+'&units=metric&cnt=56').then(r=>r.json()),
+    fetch(BASE+'/air_pollution?lat='+S.lat+'&lon='+S.lon+'&appid='+API_KEY).then(r=>r.json()),
   ]);
-  S.cur=r2; S.fore=r3; S.air=r4;
-  updateDash(); renderFc(); initCharts(); renderSensors(); renderS3(); renderAlerts();
+  if(cur.cod===401||String(cur.cod)==='401')throw new Error('401');
+  S.cur=cur;S.fore=fore;S.air=air;
+  document.getElementById('cityName').textContent=S.city;
+  updateDash();renderFc();buildCharts();renderSensors();renderS3();renderAlerts();
   document.getElementById('lastUpdPill').textContent='Updated '+new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
 }
+async function fetchLambda(){
+  try{
+    const res=await fetch(LAMBDA);
+    const data=await res.json();
+    if(!data||!data.length)return;
 
-function refreshAll(){ fetchAll().catch(()=>{mockData();initCharts();renderFc();}); }
-function doSearch(){ S.city=document.getElementById('cityInput').value.trim()||S.city; document.getElementById('cityInput').value=''; document.getElementById('cityName').textContent=S.city; fetchAll().catch(()=>{}); }
+    const nodeData=data
+      .filter(d=>d.device_id==='nimbus-node-001')
+      .sort((a,b)=>b.timestamp-a.timestamp)[0];
 
-// ── MOCK DATA ─────────────────────────────────────────────────
+    if(!nodeData)return;
+
+    // Sidebar
+    document.getElementById('nsTemp').textContent=nodeData.temperature+'°C';
+
+    // Cards update
+    const s1=document.getElementById('sv-SENS-001');
+    if(s1)s1.textContent=nodeData.temperature;
+
+    const s2=document.getElementById('sv-SENS-002');
+    if(s2)s2.textContent=nodeData.humidity;
+
+    const s3=document.getElementById('sv-SENS-003');
+    if(s3)s3.textContent=nodeData.pressure;
+
+    const s4=document.getElementById('sv-SENS-004');
+    if(s4)s4.textContent=nodeData.air_quality;
+
+    console.log('DynamoDB real data:',nodeData);
+
+  }catch(e){console.log('Lambda error:',e);}
+}
+function refreshAll(){
+  fetchAll().catch(()=>{updateChartData();});
+  fetchLambda();
+}
+
+function doSearch(){
+  const v=document.getElementById('cityInput').value.trim();if(!v)return;
+  S.city=v;document.getElementById('cityInput').value='';
+  document.getElementById('cityName').textContent=S.city;
+  // Reset charts for new city
+  S.TC=null;S.PC=null;S.HC=null;S.WC=null;
+  fetchAll().catch(()=>{});
+}
+
+// MOCK DATA
 function mockData(){
   const t=31.4;
   S.cur={name:'New Delhi',main:{temp:t,feels_like:34,humidity:62,pressure:1008,temp_min:27,temp_max:35},wind:{speed:4.2,deg:230,gust:7},weather:[{description:'Partly Cloudy',icon:'02d'}],visibility:8000,sys:{sunrise:1710382200,sunset:1710427800,country:'IN'},uvi:7};
   const li=[];
-  for(let i=0;i<56;i++){const b=28+Math.sin(i*.5)*5+(Math.random()-.5)*2;li.push({dt:Date.now()/1000+i*10800,main:{temp:b,temp_min:b-4,temp_max:b+4,humidity:55+Math.random()*30},weather:[{description:'Partly Cloudy',icon:'02d'}],wind:{speed:3+Math.random()*7},pop:Math.random()*.6,rain:Math.random()>.7?{'3h':Math.random()*4}:null});}
-  S.fore={list:li};
-  S.air={list:[{main:{aqi:2},components:{pm2_5:18}}]};
+  for(let i=0;i<56;i++){const b=28+Math.sin(i*.5)*5+(Math.random()-.5)*2;li.push({dt:Date.now()/1000+i*10800,main:{temp:b,temp_min:b-4,temp_max:b+4,humidity:55+Math.random()*30},weather:[{description:'Partly Cloudy',icon:'02d'}],wind:{speed:3+Math.random()*7},pop:Math.random()*.6});}
+  S.fore={list:li};S.air={list:[{main:{aqi:2},components:{pm2_5:18}}]};
   updateDash();
 }
 
-// ── DASHBOARD UPDATE ──────────────────────────────────────────
+// DASHBOARD UPDATE
 function updateDash(){
-  const c=S.cur,u=us();
+  const c=S.cur,u=us(),aqi=S.air?.list?.[0]?.main?.aqi||2;
+  const aqiL=['','Good','Fair','Moderate','Poor','Very Poor'];
   document.getElementById('heroTemp').textContent=td(c.main.temp)+u;
   document.getElementById('heroCond').textContent=(c.weather[0]?.description||'').replace(/\b\w/g,x=>x.toUpperCase());
-  document.getElementById('heroDesc').textContent=`${c.name}, ${c.sys.country}`;
+  document.getElementById('heroDesc').textContent=c.name+', '+(c.sys?.country||'IN');
   document.getElementById('hWind').textContent=Math.round(c.wind.speed*3.6);
   document.getElementById('hHum').textContent=c.main.humidity+'%';
   document.getElementById('hPres').textContent=c.main.pressure;
-  const aqi=S.air?.list?.[0]?.main?.aqi||2;
-  const aqiL=['','Good','Fair','Moderate','Poor','Very Poor'];
   document.getElementById('hAQI').textContent=aqiL[aqi]||'Fair';
   document.getElementById('heroHigh').textContent=td(c.main.temp_max)+u;
   document.getElementById('heroLow').textContent=td(c.main.temp_min)+u;
@@ -684,85 +557,98 @@ function updateDash(){
   document.getElementById('kAQIS').textContent='PM2.5: '+(S.air?.list?.[0]?.components?.pm2_5?.toFixed(1)||'--')+' μg/m³';
 }
 
-// ── CHARTS ─────────────────────────────────────────────────
-const DEF={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,backgroundColor:'#0c1f14',borderColor:'rgba(61,220,110,.25)',borderWidth:1,titleColor:'#e2ffe8',bodyColor:'#7aad8a',padding:10,cornerRadius:6}},scales:{x:{grid:{color:'rgba(61,220,110,.06)'},ticks:{color:'#3d6650',font:{family:'IBM Plex Mono',size:10}}},y:{grid:{color:'rgba(61,220,110,.06)'},ticks:{color:'#3d6650',font:{family:'IBM Plex Mono',size:10}}}}};
-function dc(id){if(S.charts[id]){S.charts[id].destroy();delete S.charts[id];}}
-function gc(id){const c=document.getElementById(id);return c?c.getContext('2d'):null;}
+// CHART CONFIG — animation:false is the key to zero flicker!
+const DEF={responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,backgroundColor:'#0f223a',borderColor:'rgba(79,195,255,.25)',borderWidth:1,titleColor:'#e6f2ff',bodyColor:'#7aa6d9',padding:10,cornerRadius:6}},scales:{x:{grid:{color:'rgba(79,195,255,.06)'},ticks:{color:'#3a5f8a',font:{family:'IBM Plex Mono',size:10}}},y:{grid:{color:'rgba(79,195,255,.06)'},ticks:{color:'#3a5f8a',font:{family:'IBM Plex Mono',size:10}}}}};
 
-function initCharts(){
-  drawTempChart(); drawPrecipChart(); drawHumChart(); drawWindCompass(); drawWeekChart();
-}
-
-function drawTempChart(){
-  if (window.myChart) {
-  window.myChart.destroy();
-}
-
-const ctx = gc('cTemp');
-if (!ctx) return;
+// GET DATA HELPERS
+function getTD(){
   const items=(S.fore?.list||[]).slice(0,8);
   const labels=items.map(i=>new Date(i.dt*1000).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}));
   const owm=items.map(i=>td(i.main.temp));
-  // Blend with ESP readings
   const esp=S.espReadings.slice(-8).map(r=>td(r.temperature));
-  while(esp.length<8) esp.unshift(null);
-  const g=ctx.createLinearGradient(0,0,0,130);
-  g.addColorStop(0,'rgba(61,220,110,.2)');g.addColorStop(1,'rgba(61,220,110,0)');
-  window.myChart = new Chart(ctx,{type:'line',data:{labels,datasets:[
-    {label:'OWM API',data:owm,borderColor:'#3ddc6e',borderWidth:2,fill:true,backgroundColor:g,tension:.4,pointRadius:3,pointBackgroundColor:'#3ddc6e'},
-    {label:'ESP Node',data:esp,borderColor:'#4fc3ff',borderWidth:1.5,fill:false,tension:.4,pointRadius:2,borderDash:[4,3],pointBackgroundColor:'#4fc3ff'},
-  ]},options:{...DEF,plugins:{...DEF.plugins,legend:{display:true,labels:{color:'#7aad8a',boxWidth:10,font:{family:'IBM Plex Mono',size:10}}}}}});
+  while(esp.length<8)esp.unshift(null);
+  return {labels,owm,esp};
+}
+function getPD(){
+  const items=(S.fore?.list||[]).slice(0,8);
+  return {labels:items.map(i=>new Date(i.dt*1000).toLocaleTimeString('en-IN',{hour:'2-digit'})),pop:items.map(i=>Math.round((i.pop||0)*100))};
+}
+function getHD(){
+  const items=(S.fore?.list||[]).slice(0,8);
+  return {labels:items.map(i=>new Date(i.dt*1000).toLocaleTimeString('en-IN',{hour:'2-digit'})),hum:items.map(i=>i.main.humidity),dew:items.map(i=>td(i.main.temp-(100-i.main.humidity)/5))};
 }
 
-function drawPrecipChart(){
-  dc('cPrecip'); const ctx=gc('cPrecip'); if(!ctx)return;
-  const items=(S.fore?.list||[]).slice(0,8);
-  const labels=items.map(i=>new Date(i.dt*1000).toLocaleTimeString('en-IN',{hour:'2-digit'}));
-  const pop=items.map(i=>Math.round((i.pop||0)*100));
+// BUILD ALL CHARTS (first time) OR just update data
+function buildCharts(){
+  buildTempChart();buildPrecipChart();buildHumChart();drawWindCompass();buildWeekChart();
+}
+
+// UPDATE ONLY (no destroy, no rebuild = zero flicker)
+function updateChartData(){
+  if(S.TC){const d=getTD();S.TC.data.labels=d.labels;S.TC.data.datasets[0].data=d.owm;S.TC.data.datasets[1].data=d.esp;S.TC.update('none');}
+  if(S.PC){const d=getPD();S.PC.data.labels=d.labels;S.PC.data.datasets[0].data=d.pop;S.PC.update('none');}
+  if(S.HC){const d=getHD();S.HC.data.labels=d.labels;S.HC.data.datasets[0].data=d.hum;S.HC.data.datasets[1].data=d.dew;S.HC.update('none');}
+  drawWindCompass();
+}
+
+function buildTempChart(){
+  const ctx=gc('cTemp');if(!ctx)return;
+  if(S.TC){updateChartData();return;}
+  const {labels,owm,esp}=getTD();
+  const g=ctx.createLinearGradient(0,0,0,130);
+  g.addColorStop(0,'rgba(79,195,255,.2)');g.addColorStop(1,'rgba(79,195,255,0)');
+  S.TC=new Chart(ctx,{type:'line',data:{labels,datasets:[
+    {label:'OWM API',data:owm,borderColor:'#4fc3ff',borderWidth:2,fill:true,backgroundColor:g,tension:.4,pointRadius:3,pointBackgroundColor:'#4fc3ff'},
+    {label:'ESP Node',data:esp,borderColor:'#ffd54f',borderWidth:1.5,fill:false,tension:.4,pointRadius:2,borderDash:[4,3],pointBackgroundColor:'#ffd54f'},
+  ]},options:{...DEF,plugins:{...DEF.plugins,legend:{display:true,labels:{color:'#7aa6d9',boxWidth:10,font:{family:'IBM Plex Mono',size:10}}}}}});
+}
+
+function buildPrecipChart(){
+  const ctx=gc('cPrecip');if(!ctx)return;
+  if(S.PC){const d=getPD();S.PC.data.labels=d.labels;S.PC.data.datasets[0].data=d.pop;S.PC.update('none');return;}
+  const {labels,pop}=getPD();
   const g=ctx.createLinearGradient(0,0,0,130);
   g.addColorStop(0,'rgba(79,195,255,.5)');g.addColorStop(1,'rgba(79,195,255,.05)');
-  S.charts.cPrecip=new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:'Precip %',data:pop,backgroundColor:g,borderRadius:4}]},options:{...DEF}});
+  S.PC=new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:'Precip %',data:pop,backgroundColor:g,borderRadius:4}]},options:{...DEF}});
 }
 
-function drawHumChart(){
-  dc('cHum'); const ctx=gc('cHum'); if(!ctx)return;
-  const items=(S.fore?.list||[]).slice(0,8);
-  const labels=items.map(i=>new Date(i.dt*1000).toLocaleTimeString('en-IN',{hour:'2-digit'}));
-  const hum=items.map(i=>i.main.humidity);
-  const dew=items.map(i=>td(i.main.temp-(100-i.main.humidity)/5));
-  S.charts.cHum=new Chart(ctx,{type:'line',data:{labels,datasets:[
-    {label:'Humidity %',data:hum,borderColor:'#3ddc6e',borderWidth:2,fill:false,tension:.4,yAxisID:'y'},
-    {label:'Dew Point',data:dew,borderColor:'#b084ff',borderWidth:1.5,fill:false,tension:.4,borderDash:[4,3],yAxisID:'y1'},
-  ]},options:{...DEF,scales:{...DEF.scales,y:{...DEF.scales.y,position:'left',min:0,max:100},y1:{...DEF.scales.y,position:'right',grid:{display:false}}},plugins:{...DEF.plugins,legend:{display:true,labels:{color:'#7aad8a',boxWidth:10,font:{family:'IBM Plex Mono',size:10}}}}}});
+function buildHumChart(){
+  const ctx=gc('cHum');if(!ctx)return;
+  if(S.HC){const d=getHD();S.HC.data.labels=d.labels;S.HC.data.datasets[0].data=d.hum;S.HC.data.datasets[1].data=d.dew;S.HC.update('none');return;}
+  const {labels,hum,dew}=getHD();
+  S.HC=new Chart(ctx,{type:'line',data:{labels,datasets:[
+    {label:'Humidity %',data:hum,borderColor:'#4fc3ff',borderWidth:2,fill:false,tension:.4,yAxisID:'y'},
+    {label:'Dew Point',data:dew,borderColor:'#b39ddb',borderWidth:1.5,fill:false,tension:.4,borderDash:[4,3],yAxisID:'y1'},
+  ]},options:{...DEF,scales:{...DEF.scales,y:{...DEF.scales.y,position:'left',min:0,max:100},y1:{...DEF.scales.y,position:'right',grid:{display:false}}},plugins:{...DEF.plugins,legend:{display:true,labels:{color:'#7aa6d9',boxWidth:10,font:{family:'IBM Plex Mono',size:10}}}}}});
 }
 
-function drawWeekChart(){
-  dc('cWeek'); const ctx=gc('cWeek'); if(!ctx)return;
-  const daily={}; (S.fore?.list||[]).forEach(i=>{const k=new Date(i.dt*1000).toDateString();if(!daily[k])daily[k]={hi:[],lo:[],d:new Date(i.dt*1000)};daily[k].hi.push(i.main.temp_max||i.main.temp);daily[k].lo.push(i.main.temp_min||i.main.temp);});
+function buildWeekChart(){
+  const ctx=gc('cWeek');if(!ctx||S.WC)return;
+  const daily={};
+  (S.fore?.list||[]).forEach(i=>{const k=new Date(i.dt*1000).toDateString();if(!daily[k])daily[k]={hi:[],lo:[],d:new Date(i.dt*1000)};daily[k].hi.push(i.main.temp_max||i.main.temp);daily[k].lo.push(i.main.temp_min||i.main.temp);});
   const days=Object.values(daily).slice(0,7);
   const labels=days.map(d=>d.d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric'}));
-  const hi=days.map(d=>td(Math.max(...d.hi))), lo=days.map(d=>td(Math.min(...d.lo)));
-  S.charts.cWeek=new Chart(ctx,{type:'line',data:{labels,datasets:[
-    {label:'High',data:hi,borderColor:'#f5c842',borderWidth:2,fill:'+1',backgroundColor:'rgba(245,200,66,.07)',tension:.4,pointRadius:4,pointBackgroundColor:'#f5c842'},
-    {label:'Low',data:lo,borderColor:'#4fc3ff',borderWidth:2,fill:false,tension:.4,pointRadius:4,pointBackgroundColor:'#4fc3ff'},
-  ]},options:{...DEF,plugins:{...DEF.plugins,legend:{display:true,labels:{color:'#7aad8a',boxWidth:10,font:{family:'IBM Plex Mono',size:10}}}}}});
+  S.WC=new Chart(ctx,{type:'line',data:{labels,datasets:[
+    {label:'High',data:days.map(d=>td(Math.max(...d.hi))),borderColor:'#ffd54f',borderWidth:2,fill:'+1',backgroundColor:'rgba(255,213,79,.07)',tension:.4,pointRadius:4,pointBackgroundColor:'#ffd54f'},
+    {label:'Low',data:days.map(d=>td(Math.min(...d.lo))),borderColor:'#4fc3ff',borderWidth:2,fill:false,tension:.4,pointRadius:4,pointBackgroundColor:'#4fc3ff'},
+  ]},options:{...DEF,plugins:{...DEF.plugins,legend:{display:true,labels:{color:'#7aa6d9',boxWidth:10,font:{family:'IBM Plex Mono',size:10}}}}}});
 }
 
 function drawWindCompass(){
-  const canvas=document.getElementById('cWind'); if(!canvas)return;
-  const ctx=canvas.getContext('2d'), cx=canvas.width/2, cy=canvas.height/2-10, r=60;
+  const canvas=document.getElementById('cWind');if(!canvas)return;
+  const ctx=canvas.getContext('2d'),cx=canvas.width/2,cy=canvas.height/2-10,r=60;
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.strokeStyle='rgba(61,220,110,.15)';ctx.lineWidth=1.5;ctx.stroke();
-  ['N','E','S','W'].forEach((d,i)=>{const a=(i*Math.PI/2)-Math.PI/2,tx=cx+(r+14)*Math.cos(a),ty=cy+(r+14)*Math.sin(a);ctx.fillStyle='#3d6650';ctx.font='10px IBM Plex Mono';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(d,tx,ty);});
-  const wd=(S.cur?.wind?.deg||230), wa=(wd-90)*Math.PI/180;
-  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+r*.8*Math.cos(wa),cy+r*.8*Math.sin(wa));ctx.strokeStyle='#3ddc6e';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.stroke();
-  ctx.beginPath();ctx.arc(cx,cy,5,0,Math.PI*2);ctx.fillStyle='#3ddc6e';ctx.fill();
+  ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.strokeStyle='rgba(79,195,255,.15)';ctx.lineWidth=1.5;ctx.stroke();
+  ['N','E','S','W'].forEach((d,i)=>{const a=(i*Math.PI/2)-Math.PI/2;ctx.fillStyle='#3a5f8a';ctx.font='10px IBM Plex Mono';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(d,cx+(r+14)*Math.cos(a),cy+(r+14)*Math.sin(a));});
+  const wd=S.cur?.wind?.deg||230,wa=(wd-90)*Math.PI/180;
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+r*.8*Math.cos(wa),cy+r*.8*Math.sin(wa));ctx.strokeStyle='#4fc3ff';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.stroke();
+  ctx.beginPath();ctx.arc(cx,cy,5,0,Math.PI*2);ctx.fillStyle='#4fc3ff';ctx.fill();
   const ws=Math.round((S.cur?.wind?.speed||4)*3.6);
-  ctx.fillStyle='#e2ffe8';ctx.font='bold 16px Barlow Condensed';ctx.textAlign='center';ctx.fillText(ws+' km/h',cx,cy+r+22);
-  ctx.fillStyle='#3d6650';ctx.font='10px IBM Plex Mono';ctx.fillText(wd+'°',cx,cy+r+36);
+  ctx.fillStyle='#e6f2ff';ctx.font='bold 16px Barlow Condensed';ctx.textAlign='center';ctx.fillText(ws+' km/h',cx,cy+r+22);
+  ctx.fillStyle='#3a5f8a';ctx.font='10px IBM Plex Mono';ctx.fillText(wd+'°',cx,cy+r+36);
 }
 
-// ── FORECAST ──────────────────────────────────────────────────
+// FORECAST
 function renderFc(){
   if(!S.fore)return;
   const daily={};
@@ -775,207 +661,110 @@ function renderFc(){
     const ic=icons[items[4]?.weather[0]?.icon||items[0].weather[0].icon]||'🌤️';
     const desc=items[4]?.weather[0]?.description||items[0].weather[0].description;
     const pop=Math.max(...items.map(i=>(i.pop||0)*100));
-    return `<div class="fc-card"><div class="fc-day">${date.toLocaleDateString('en-IN',{weekday:'short'})}</div><div class="fc-ico">${ic}</div><div class="fc-hi">${td(hi)}${us()}</div><div class="fc-lo">${td(lo)}${us()}</div><div class="fc-desc">${desc}</div>${pop>10?`<div class="fc-pp">💧 ${Math.round(pop)}%</div>`:''}</div>`;
+    return '<div class="fc-card"><div class="fc-day">'+date.toLocaleDateString('en-IN',{weekday:'short'})+'</div><div class="fc-ico">'+ic+'</div><div class="fc-hi">'+td(hi)+us()+'</div><div class="fc-lo">'+td(lo)+us()+'</div><div class="fc-desc">'+desc+'</div>'+(pop>10?'<div class="fc-pp">💧 '+Math.round(pop)+'%</div>':'')+'</div>';
   }).join('');
 }
 
-// ── SENSORS ───────────────────────────────────────────────────
+// SENSORS
 const NODES=[
   {id:'SENS-001',loc:'Connaught Place',type:'Temperature',fn:()=>(S.espReadings.at(-1)?.temperature||30).toFixed(1),unit:'°C',pct:()=>50+Math.random()*30,online:true,rssi:-62},
   {id:'SENS-002',loc:'India Gate',type:'Humidity',fn:()=>(S.espReadings.at(-1)?.humidity||60).toFixed(1),unit:'%',pct:()=>55+Math.random()*25,online:true,rssi:-71},
-  {id:'SENS-003',loc:'Dwarka Sector 10',type:'Pressure',fn:()=>(S.espReadings.at(-1)?.pressure||1010).toFixed(1),unit:'hPa',pct:()=>70+Math.random()*15,online:true,rssi:-55},
+  {id:'SENS-003',loc:'Dwarka Sec-10',type:'Pressure',fn:()=>(S.espReadings.at(-1)?.pressure||1010).toFixed(1),unit:'hPa',pct:()=>70+Math.random()*15,online:true,rssi:-55},
   {id:'SENS-004',loc:'Noida Sec-62',type:'Air Quality',fn:()=>Math.round(450+Math.random()*300),unit:'PPM',pct:()=>30+Math.random()*50,online:true,rssi:-68},
   {id:'SENS-005',loc:'Gurugram Cyber',type:'Heat Index',fn:()=>(S.espReadings.at(-1)?.heat_index||32).toFixed(1),unit:'°C',pct:()=>40+Math.random()*40,online:true,rssi:-74},
-  {id:'SENS-006',loc:'Faridabad',type:'Dew Point',fn:()=>(S.espReadings.at(-1)?.temperature?(S.espReadings.at(-1).temperature-(100-S.espReadings.at(-1).humidity)/5):22).toFixed(1),unit:'°C',pct:()=>35+Math.random()*30,online:true,rssi:-66},
+  {id:'SENS-006',loc:'Faridabad',type:'Dew Point',fn:()=>{const r=S.espReadings.at(-1);return r?(r.temperature-(100-r.humidity)/5).toFixed(1):'22';},unit:'°C',pct:()=>35+Math.random()*30,online:true,rssi:-66},
   {id:'SENS-007',loc:'Rohini',type:'Temperature',fn:()=>'—',unit:'°C',pct:()=>0,online:false,rssi:0},
   {id:'SENS-008',loc:'Lajpat Nagar',type:'Rainfall',fn:()=>(Math.random()*1.5).toFixed(2),unit:'mm/h',pct:()=>Math.random()*25,online:true,rssi:-59},
 ];
+function rssiBar(rssi){const lvl=rssi===0?0:rssi>-60?4:rssi>-70?3:rssi>-80?2:1;return '<div class="rssi">'+[1,2,3,4].map(i=>'<div class="rssi-bar '+(i<=lvl?'on':'')+'" style="height:'+(4+i*2)+'px"></div>').join('')+'</div>';}
+function renderSensors(){document.getElementById('sensorGrid').innerHTML=NODES.map(n=>'<div class="sensor-card '+(n.online?'':'offline')+'"><div class="sc-top"><span class="sc-id">'+n.id+'</span><span class="sc-status '+(n.online?'on':'off')+'">'+(n.online?'● ONLINE':'○ OFFLINE')+'</span></div><div class="sc-loc">'+n.loc+'</div><div class="sc-reading" id="sv-'+n.id+'">'+n.fn()+'</div><div class="sc-type">'+n.type+' · '+n.unit+'</div><div class="sc-bar"><div class="sc-fill" style="width:'+n.pct()+'%"></div></div><div class="sc-meta"><span>RSSI: '+(n.rssi?n.rssi+'dBm':'—')+'</span>'+rssiBar(n.rssi)+'</div></div>').join('');}
+setInterval(()=>{if(document.getElementById('v-sensors').classList.contains('active'))renderSensors();},5000);
 
-function rssiBar(rssi){
-  const lvl=rssi===0?0:rssi>-60?4:rssi>-70?3:rssi>-80?2:1;
-  return `<div class="rssi">${[1,2,3,4].map(i=>`<div class="rssi-bar ${i<=lvl?'on':''}" style="height:${4+i*2}px"></div>`).join('')}</div>`;
-}
-
-function renderSensors(){
-  document.getElementById('sensorGrid').innerHTML=NODES.map(n=>`
-    <div class="sensor-card ${n.online?'':'offline'}">
-      <div class="sc-top"><span class="sc-id">${n.id}</span><span class="sc-status ${n.online?'on':'off'}">${n.online?'● ONLINE':'○ OFFLINE'}</span></div>
-      <div class="sc-loc">${n.loc}</div>
-      <div class="sc-reading" id="sv-${n.id}">${n.fn()}</div>
-      <div class="sc-type">${n.type} · ${n.unit}</div>
-      <div class="sc-bar"><div class="sc-fill" style="width:${n.pct()}%"></div></div>
-      <div class="sc-meta"><span>RSSI: ${n.rssi?n.rssi+'dBm':'—'}</span>${rssiBar(n.rssi)}</div>
-    </div>
-  `).join('');
-}
-
+let EC={};
 function renderESPCharts(){
-  dc('cESP'); dc('cESP2');
-  const readings=S.espReadings.slice(-12);
-  if(!readings.length) return;
-  const labels=readings.map((_,i)=>-((readings.length-1-i)*30)+'s');
-  const temps=readings.map(r=>td(r.temperature));
-  const hums=readings.map(r=>r.humidity.toFixed(1));
-  const pres=readings.map(r=>r.pressure.toFixed(1));
-  const ctx1=gc('cESP'); if(!ctx1)return;
-  const g=ctx1.createLinearGradient(0,0,0,150);
-  g.addColorStop(0,'rgba(61,220,110,.22)');g.addColorStop(1,'rgba(61,220,110,0)');
-  S.charts.cESP=new Chart(ctx1,{type:'line',data:{labels,datasets:[{label:'Temp',data:temps,borderColor:'#3ddc6e',borderWidth:2,fill:true,backgroundColor:g,tension:.4,pointRadius:2}]},options:{...DEF}});
-  const ctx2=gc('cESP2'); if(!ctx2)return;
-  S.charts.cESP2=new Chart(ctx2,{type:'line',data:{labels,datasets:[
-    {label:'Humidity %',data:hums,borderColor:'#4fc3ff',borderWidth:2,fill:false,tension:.4,yAxisID:'y'},
-    {label:'Pressure hPa',data:pres,borderColor:'#f5c842',borderWidth:1.5,fill:false,tension:.4,borderDash:[4,3],yAxisID:'y1'},
-  ]},options:{...DEF,scales:{...DEF.scales,y:{...DEF.scales.y,position:'left'},y1:{...DEF.scales.y,position:'right',grid:{display:false}}},plugins:{...DEF.plugins,legend:{display:true,labels:{color:'#7aad8a',boxWidth:10,font:{family:'IBM Plex Mono',size:10}}}}}});
+  ['cESP','cESP2'].forEach(id=>{if(EC[id]){EC[id].destroy();delete EC[id];}});
+  const rd=S.espReadings.slice(-12);if(!rd.length)return;
+  const labels=rd.map((_,i)=>-((rd.length-1-i)*30)+'s');
+  const ctx1=gc('cESP');if(!ctx1)return;
+  const g=ctx1.createLinearGradient(0,0,0,150);g.addColorStop(0,'rgba(79,195,255,.22)');g.addColorStop(1,'rgba(79,195,255,0)');
+  EC.cESP=new Chart(ctx1,{type:'line',data:{labels,datasets:[{label:'Temp',data:rd.map(r=>td(r.temperature)),borderColor:'#4fc3ff',borderWidth:2,fill:true,backgroundColor:g,tension:.4,pointRadius:2}]},options:{...DEF}});
+  const ctx2=gc('cESP2');if(!ctx2)return;
+  EC.cESP2=new Chart(ctx2,{type:'line',data:{labels,datasets:[{label:'Humidity %',data:rd.map(r=>r.humidity.toFixed(1)),borderColor:'#4fc3ff',borderWidth:2,fill:false,tension:.4,yAxisID:'y'},{label:'Pressure',data:rd.map(r=>r.pressure.toFixed(1)),borderColor:'#ffd54f',borderWidth:1.5,fill:false,tension:.4,borderDash:[4,3],yAxisID:'y1'}]},options:{...DEF,scales:{...DEF.scales,y:{...DEF.scales.y,position:'left'},y1:{...DEF.scales.y,position:'right',grid:{display:false}}},plugins:{...DEF.plugins,legend:{display:true,labels:{color:'#7aa6d9',boxWidth:10,font:{family:'IBM Plex Mono',size:10}}}}}});
 }
 
-// Live sensor update
-setInterval(()=>{ if(document.getElementById('v-sensors').classList.contains('active')) renderSensors(); },5000);
-
-// ── S3 VIEW ───────────────────────────────────────────────────
+// S3
 function renderS3(){
-  const today=new Date(), y=today.getFullYear(), m=String(today.getMonth()+1).padStart(2,'0'), d=String(today.getDate()).padStart(2,'0');
-  const rows=[
-    {path:`raw/year=${y}/month=${m}/day=${d}/hour=14/`,type:'Prefix',objs:Math.floor(60+Math.random()*30),size:(2.1+Math.random()*.5).toFixed(1)+' MB',mod:'Just now',cls:'STANDARD_IA'},
-    {path:`raw/year=${y}/month=${m}/day=${d}/`,type:'Prefix',objs:Math.floor(400+Math.random()*100),size:(13.2+Math.random()*2).toFixed(1)+' MB',mod:'Today',cls:'STANDARD_IA'},
-    {path:`daily/${y}/${m}/${d}/nimbus-node-001.ndjson`,type:'NDJSON',objs:1,size:(180+Math.random()*40).toFixed(0)+' KB',mod:'Today',cls:'STANDARD'},
-    {path:`models/nimbus_lstm_v1.h5`,type:'ML Model',objs:1,size:'4.2 MB',mod:'Yesterday',cls:'STANDARD'},
-    {path:`models/nimbus_scaler_v1.pkl`,type:'Pickle',objs:1,size:'12 KB',mod:'Yesterday',cls:'STANDARD'},
-    {path:`models/metadata.json`,type:'JSON',objs:1,size:'1.1 KB',mod:'Yesterday',cls:'STANDARD'},
-    {path:`errors/`,type:'Prefix',objs:0,size:'0 B',mod:'—',cls:'—'},
-  ];
-  document.getElementById('s3Body').innerHTML=rows.map(r=>`
-    <tr><td class="s3-path">${r.path}</td><td>${r.type}</td><td>${r.objs}</td><td class="s3-size">${r.size}</td><td class="${r.mod==='Just now'?'s3-new':''}">${r.mod}</td><td>${r.cls}</td></tr>
-  `).join('');
+  const now=new Date(),y=now.getFullYear(),m=String(now.getMonth()+1).padStart(2,'0'),d=String(now.getDate()).padStart(2,'0'),h=String(now.getHours()).padStart(2,'0');
+  const rows=[{path:'raw/year='+y+'/month='+m+'/day='+d+'/hour='+h+'/',type:'Prefix',objs:Math.floor(60+Math.random()*30),size:(2.1+Math.random()*.5).toFixed(1)+' MB',mod:'Just now',cls:'STANDARD_IA'},{path:'raw/year='+y+'/month='+m+'/day='+d+'/',type:'Prefix',objs:Math.floor(400+Math.random()*100),size:(13.2+Math.random()*2).toFixed(1)+' MB',mod:'Today',cls:'STANDARD_IA'},{path:'daily/'+y+'/'+m+'/'+d+'/nimbus-node-001.ndjson',type:'NDJSON',objs:1,size:(180+Math.random()*40).toFixed(0)+' KB',mod:'Today',cls:'STANDARD'},{path:'models/nimbus_lstm_v1.h5',type:'ML Model',objs:1,size:'4.2 MB',mod:'Yesterday',cls:'STANDARD'},{path:'models/metadata.json',type:'JSON',objs:1,size:'1.1 KB',mod:'Yesterday',cls:'STANDARD'},{path:'errors/',type:'Prefix',objs:0,size:'0 B',mod:'—',cls:'—'}];
+  document.getElementById('s3Body').innerHTML=rows.map(r=>'<tr><td class="s3-path">'+r.path+'</td><td>'+r.type+'</td><td>'+r.objs+'</td><td class="s3-size">'+r.size+'</td><td class="'+(r.mod==='Just now'?'s3-new':'')+'">'+r.mod+'</td><td>'+r.cls+'</td></tr>').join('');
 }
 
+let SC={};
 function renderS3Charts(){
-  dc('cS3'); dc('cS3pie');
-  const ctx1=gc('cS3'); if(!ctx1)return;
-  const labels=[]; const data=[];
+  ['cS3','cS3pie'].forEach(id=>{if(SC[id]){SC[id].destroy();delete SC[id];}});
+  const ctx1=gc('cS3');if(!ctx1)return;
+  const labels=[],data=[];
   for(let i=29;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);labels.push(d.toLocaleDateString('en-IN',{month:'short',day:'numeric'}));data.push(Math.floor(800+Math.random()*600));}
-  const g=ctx1.createLinearGradient(0,0,0,160);
-  g.addColorStop(0,'rgba(61,220,110,.4)');g.addColorStop(1,'rgba(61,220,110,.05)');
-  S.charts.cS3=new Chart(ctx1,{type:'bar',data:{labels,datasets:[{label:'Objects/day',data,backgroundColor:g,borderRadius:3}]},options:{...DEF}});
-  const ctx2=gc('cS3pie'); if(!ctx2)return;
-  S.charts.cS3pie=new Chart(ctx2,{type:'doughnut',data:{labels:['raw/','daily/','models/','errors/'],datasets:[{data:[68,24,7,1],backgroundColor:['#3ddc6e','#4fc3ff','#b084ff','#ff5e5e'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'right',labels:{color:'#7aad8a',font:{family:'IBM Plex Mono',size:10},boxWidth:10}},tooltip:DEF.plugins.tooltip}}});
+  const g=ctx1.createLinearGradient(0,0,0,160);g.addColorStop(0,'rgba(79,195,255,.4)');g.addColorStop(1,'rgba(79,195,255,.05)');
+  SC.cS3=new Chart(ctx1,{type:'bar',data:{labels,datasets:[{label:'Objects/day',data,backgroundColor:g,borderRadius:3}]},options:{...DEF}});
+  const ctx2=gc('cS3pie');if(!ctx2)return;
+  SC.cS3pie=new Chart(ctx2,{type:'doughnut',data:{labels:['raw/','daily/','models/','errors/'],datasets:[{data:[68,24,7,1],backgroundColor:['#4fc3ff','#ffd54f','#b39ddb','#ff6b6b'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'right',labels:{color:'#7aa6d9',font:{family:'IBM Plex Mono',size:10},boxWidth:10}},tooltip:DEF.plugins.tooltip}}});
 }
 
-// ── ML ────────────────────────────────────────────────────────
+// ML
+let MC={};
 function renderMLCharts(){
-  dc('cML'); dc('cFeat'); dc('cConf');
-  const ctx1=gc('cML'); if(!ctx1)return;
+  ['cML','cFeat','cConf'].forEach(id=>{if(MC[id]){MC[id].destroy();delete MC[id];}});
   const base=S.cur?.main?.temp||30;
-  const labels=[]; const actual=[]; const predicted=[];
-  for(let i=0;i<30;i++){labels.push('T-'+(29-i));const a=td(base+Math.sin(i*.4)*5+(Math.random()-.5)*1.5);actual.push(a);predicted.push(a+(Math.random()-.5)*1.2);}
-  S.charts.cML=new Chart(ctx1,{type:'line',data:{labels,datasets:[
-    {label:'ESP Actual',data:actual,borderColor:'#3ddc6e',borderWidth:2,fill:false,tension:.4,pointRadius:2},
-    {label:'LSTM Predicted',data:predicted,borderColor:'#f5c842',borderWidth:2,fill:false,tension:.4,pointRadius:2,borderDash:[5,3]},
-  ]},options:{...DEF,plugins:{...DEF.plugins,legend:{display:true,labels:{color:'#7aad8a',boxWidth:10,font:{family:'IBM Plex Mono',size:10}}}}}});
-  const ctx2=gc('cFeat'); if(!ctx2)return;
-  S.charts.cFeat=new Chart(ctx2,{type:'bar',data:{labels:['Temp(t-1)','Humidity','Pressure','AQI','Hour_sin','Hour_cos','Day_sin','Day_cos','HeatIdx','DewPt'],datasets:[{label:'Importance',data:[.35,.20,.15,.10,.07,.06,.03,.02,.01,.01],backgroundColor:'#3ddc6e',borderRadius:3}]},options:{...DEF,indexAxis:'y'}});
-  const ctx3=gc('cConf'); if(!ctx3)return;
-  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-  const pred=[],lo=[],hi=[];
-  let cur=base;
-  days.forEach((d,i)=>{cur+=( Math.random()-.5)*3;pred.push(td(cur));lo.push(td(cur-1.87*(1+i*.1)));hi.push(td(cur+1.87*(1+i*.1)));});
-  S.charts.cConf=new Chart(ctx3,{type:'line',data:{labels:days,datasets:[
-    {label:'Upper 95%',data:hi,borderColor:'rgba(61,220,110,.3)',borderWidth:1,fill:'+1',backgroundColor:'rgba(61,220,110,.07)',tension:.4,pointRadius:0},
-    {label:'LSTM Forecast',data:pred,borderColor:'#3ddc6e',borderWidth:2,fill:false,tension:.4,pointRadius:4,pointBackgroundColor:'#3ddc6e'},
-    {label:'Lower 95%',data:lo,borderColor:'rgba(61,220,110,.3)',borderWidth:1,fill:false,tension:.4,pointRadius:0},
-  ]},options:{...DEF,plugins:{...DEF.plugins,legend:{display:false}}}});
+  const ctx1=gc('cML');if(!ctx1)return;
+  const lbls=[],actual=[],predicted=[];
+  for(let i=0;i<30;i++){lbls.push('T-'+(29-i));const a=td(base+Math.sin(i*.4)*5+(Math.random()-.5)*1.5);actual.push(a);predicted.push(a+(Math.random()-.5)*1.2);}
+  MC.cML=new Chart(ctx1,{type:'line',data:{labels:lbls,datasets:[{label:'ESP Actual',data:actual,borderColor:'#4fc3ff',borderWidth:2,fill:false,tension:.4,pointRadius:2},{label:'LSTM Predicted',data:predicted,borderColor:'#ffd54f',borderWidth:2,fill:false,tension:.4,pointRadius:2,borderDash:[5,3]}]},options:{...DEF,plugins:{...DEF.plugins,legend:{display:true,labels:{color:'#7aa6d9',boxWidth:10,font:{family:'IBM Plex Mono',size:10}}}}}});
+  const ctx2=gc('cFeat');if(!ctx2)return;
+  MC.cFeat=new Chart(ctx2,{type:'bar',data:{labels:['Temp(t-1)','Humidity','Pressure','AQI','Hour_sin','Hour_cos','Day_sin','Day_cos','HeatIdx','DewPt'],datasets:[{label:'Importance',data:[.35,.20,.15,.10,.07,.06,.03,.02,.01,.01],backgroundColor:'#4fc3ff',borderRadius:3}]},options:{...DEF,indexAxis:'y'}});
+  const ctx3=gc('cConf');if(!ctx3)return;
+  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],pred=[],lo=[],hi=[];let cur=base;
+  days.forEach((_,i)=>{cur+=(Math.random()-.5)*3;pred.push(td(cur));lo.push(td(cur-1.87*(1+i*.1)));hi.push(td(cur+1.87*(1+i*.1)));});
+  MC.cConf=new Chart(ctx3,{type:'line',data:{labels:days,datasets:[{label:'Upper',data:hi,borderColor:'rgba(79,195,255,.3)',borderWidth:1,fill:'+1',backgroundColor:'rgba(79,195,255,.07)',tension:.4,pointRadius:0},{label:'LSTM',data:pred,borderColor:'#4fc3ff',borderWidth:2,fill:false,tension:.4,pointRadius:4,pointBackgroundColor:'#4fc3ff'},{label:'Lower',data:lo,borderColor:'rgba(79,195,255,.3)',borderWidth:1,fill:false,tension:.4,pointRadius:0}]},options:{...DEF,plugins:{...DEF.plugins,legend:{display:false}}}});
 }
 
 function runML(){
-  const t=parseFloat(document.getElementById('mlT').value)||31;
-  const h=parseFloat(document.getElementById('mlH').value)||64;
-  const p=parseFloat(document.getElementById('mlP').value)||1009;
-  const a=parseFloat(document.getElementById('mlA').value)||520;
-  const hr=parseFloat(document.getElementById('mlHr').value)||14;
-  // Simulate LSTM inference
-  const pred=[]; let cur=t;
-  for(let i=0;i<48;i++){
-    const hs=Math.sin(2*Math.PI*(hr+i*.5)/24), hc=Math.cos(2*Math.PI*(hr+i*.5)/24);
-    cur=cur*.88+(28-h*.04+(1013-p)*.015-(a-400)*.003+hs*3)*0.12+(Math.random()-.5)*.8;
-    pred.push(td(cur));
-  }
+  const t=parseFloat(document.getElementById('mlT').value)||31,h=parseFloat(document.getElementById('mlH').value)||64,p=parseFloat(document.getElementById('mlP').value)||1009,a=parseFloat(document.getElementById('mlA').value)||520,hr=parseFloat(document.getElementById('mlHr').value)||14;
+  const pred=[];let cur=t;
+  for(let i=0;i<48;i++){const hs=Math.sin(2*Math.PI*(hr+i*.5)/24);cur=cur*.88+(28-h*.04+(1013-p)*.015-(a-400)*.003+hs*3)*0.12+(Math.random()-.5)*.8;pred.push(td(cur));}
   const out=document.getElementById('mlOut');
-  out.innerHTML=`<b style="color:var(--green)">🧠 LSTM BiLSTM × 2 — 48-step Prediction (24h)</b><br><br>`+
-    `<b style="color:var(--ink2)">Next 12 readings:</b><br>`+
-    pred.slice(0,12).map((v,i)=>`+${(i+1)*30}min: <span style="color:var(--green)">${v}${us()}</span>`).join(' &nbsp; ')+
-    `<br><br><b style="color:var(--ink2)">12–24h:</b><br>`+
-    pred.slice(12,24).map((v,i)=>`+${(i+13)*30}min: <span style="color:var(--amber)">${v}${us()}</span>`).join(' &nbsp; ')+
-    `<br><br><small style="color:var(--ink3)">Model: BiLSTM(128)+BiLSTM(64)+Dense(64) | SEQ_LEN=24 | FORECAST=48 | MAE=1.24°C | Data source: ESP sensors → S3</small>`;
+  out.innerHTML='<b style="color:var(--green)">🧠 LSTM BiLSTM×2 — 48-step (24h)</b><br><br><b style="color:var(--ink2)">Next 12:</b><br>'+pred.slice(0,12).map((v,i)=>'+'+((i+1)*30)+'min: <span style="color:var(--green)">'+v+us()+'</span>').join(' &nbsp; ')+'<br><br><b style="color:var(--ink2)">12–24h:</b><br>'+pred.slice(12,24).map((v,i)=>'+'+((i+13)*30)+'min: <span style="color:var(--amber)">'+v+us()+'</span>').join(' &nbsp; ')+'<br><br><small style="color:var(--ink3)">BiLSTM(128)+BiLSTM(64)+Dense(64) | MAE=1.24°C | ESP→S3→Lambda</small>';
   out.style.display='block';
 }
 
-// ── ALERTS ───────────────────────────────────────────────────
+// ALERTS
 let ALERTS=[
-  {type:'crit',badge:'SEVERE',title:'Heat Wave Warning',desc:'ESP nodes reporting >40°C. SNS alert sent to ojas@example.com',time:'8 min ago'},
+  {type:'crit',badge:'SEVERE',title:'Heat Wave Warning',desc:'ESP nodes >40°C. SNS → saraswatojas263@gmail.com',time:'8 min ago'},
   {type:'warn',badge:'THRESHOLD',title:'High Humidity Alert',desc:'SENS-002 reports 87% humidity — exceeds 85% threshold',time:'45 min ago'},
-  {type:'info',badge:'AQI',title:'Air Quality Degraded',desc:'SENS-004 PM2.5 = 68μg/m³ — Moderate risk. S3 log written.',time:'2 hr ago'},
-  {type:'ok',badge:'RESOLVED',title:'Fog Advisory Lifted',desc:'Visibility restored to 9km. Lambda updated DynamoDB status.',time:'Yesterday'},
+  {type:'info',badge:'AQI',title:'Air Quality Degraded',desc:'SENS-004 PM2.5=68μg/m³. Lambda logged to S3.',time:'2 hr ago'},
+  {type:'ok',badge:'RESOLVED',title:'Fog Advisory Lifted',desc:'Visibility restored. DynamoDB status updated.',time:'Yesterday'},
 ];
+let AC=null;
 function renderAlerts(){
-  document.getElementById('alertList').innerHTML=ALERTS.map(a=>`<div class="alert-item ${a.type}"><span class="a-badge">${a.badge}</span><div><div class="a-title">${a.title}</div><div class="a-desc">${a.desc}</div></div><div class="a-time">${a.time}</div></div>`).join('');
-  dc('cAlert'); const ctx=gc('cAlert'); if(!ctx)return;
-  const labels=[]; const data=[];
+  document.getElementById('alertList').innerHTML=ALERTS.map(a=>'<div class="alert-item '+a.type+'"><span class="a-badge">'+a.badge+'</span><div><div class="a-title">'+a.title+'</div><div class="a-desc">'+a.desc+'</div></div><div class="a-time">'+a.time+'</div></div>').join('');
+  if(AC){AC.destroy();AC=null;}
+  const ctx=gc('cAlert');if(!ctx)return;
+  const labels=[],data=[];
   for(let i=29;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);labels.push(d.toLocaleDateString('en-IN',{month:'short',day:'numeric'}));data.push(Math.floor(Math.random()*4));}
-  S.charts.cAlert=new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:'Alerts',data,backgroundColor:'rgba(255,94,94,.55)',borderRadius:3}]},options:{...DEF}});
+  AC=new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:'Alerts',data,backgroundColor:'rgba(255,107,107,.55)',borderRadius:3}]},options:{...DEF}});
 }
-function addAlert(){const t=prompt('Alert threshold (e.g. "Temp > 42°C")');if(!t)return;ALERTS.unshift({type:'info',badge:'CUSTOM',title:t,desc:'User-defined rule via dashboard. SNS topic: nimbus-weather-alerts',time:'just now'});renderAlerts();document.getElementById('alertBadge').textContent=parseInt(document.getElementById('alertBadge').textContent)+1;}
+function addAlert(){const t=prompt('Alert rule (e.g. "Temp > 42°C")');if(!t)return;ALERTS.unshift({type:'info',badge:'CUSTOM',title:t,desc:'SNS: nimbus-alerts → saraswatojas263@gmail.com',time:'just now'});renderAlerts();document.getElementById('alertBadge').textContent=parseInt(document.getElementById('alertBadge').textContent)+1;}
 
-// ── MAP ──────────────────────────────────────────────────────
-const CITIES=[
-  {name:'New Delhi',temp:32,icon:'☀️',l:'62%',t:'28%'},
-  {name:'Mumbai',temp:29,icon:'🌧️',l:'52%',t:'48%'},
-  {name:'London',temp:13,icon:'🌦️',l:'28%',t:'18%'},
-  {name:'New York',temp:18,icon:'⛅',l:'16%',t:'26%'},
-  {name:'Tokyo',temp:22,icon:'🌤️',l:'80%',t:'30%'},
-  {name:'Dubai',temp:40,icon:'☀️',l:'58%',t:'38%'},
-  {name:'Sydney',temp:25,icon:'⛅',l:'82%',t:'65%'},
-];
-function renderMap(){
-  document.getElementById('mapCanvas').innerHTML=CITIES.map(c=>`
-    <div class="map-city" style="left:${c.l};top:${c.t};transform:translate(-50%,-50%)">
-      <div class="map-city-inner">${c.icon} <b>${td(c.temp)}${us()}</b><div class="ct">${c.name}</div></div>
-    </div>
-  `).join('');
-}
-function setLayer(btn,layer){ document.querySelectorAll('.map-btn').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); renderMap(); }
+// MAP
+const CITIES=[{name:'New Delhi',temp:32,icon:'☀️',l:'62%',t:'28%'},{name:'Mumbai',temp:29,icon:'🌧️',l:'52%',t:'48%'},{name:'London',temp:13,icon:'🌦️',l:'28%',t:'18%'},{name:'New York',temp:18,icon:'⛅',l:'16%',t:'26%'},{name:'Tokyo',temp:22,icon:'🌤️',l:'80%',t:'30%'},{name:'Dubai',temp:40,icon:'☀️',l:'58%',t:'38%'},{name:'Sydney',temp:25,icon:'⛅',l:'82%',t:'65%'}];
+function renderMap(){document.getElementById('mapCanvas').innerHTML=CITIES.map(c=>'<div class="map-city" style="left:'+c.l+';top:'+c.t+';transform:translate(-50%,-50%)"><div class="map-city-inner">'+c.icon+' <b>'+td(c.temp)+us()+'</b><div class="ct">'+c.name+'</div></div></div>').join('');}
+function setLayer(btn){document.querySelectorAll('.map-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderMap();}
 
-// ── AUTO-REFRESH ─────────────────────────────────────────────
-setInterval(refreshAll, 300000);
-</script>
-<script>
-async function loadData() {
-  try {
-    const res = await fetch("https://dgtmofz0y7.execute-api.ap-south-1.amazonaws.com/dev/nimbus-lambda");
-    const data = await res.json();
-
-    console.log("API DATA:", data);
-    // 👉 graph ke liye data prepare
-const temps = data.map(d => d.temperature);
-const labels = data.map((d, i) => i + 1);
-
-// 👉 chart update karo
-if (window.myChart) {
-  window.myChart.data.labels = labels;
-  window.myChart.data.datasets[0].data = temps;
-  window.myChart.update();
-}
-
-    const latest = data[data.length - 1];
-
-    document.getElementById("heroTemp").innerText = latest.temperature + "°C";
-    document.getElementById("kT").innerText = latest.temperature + "°C";
-
-  } catch (err) {
-    console.error("Error:", err);
-  }
-}
-
-loadData();
-setInterval(loadData, 10000);
+// AUTO REFRESH — only updates data, NEVER destroys main charts
+setInterval(()=>{
+  fetchAll().catch(()=>{updateChartData();});
+  fetchLambda();
+},300000);
 </script>
 </body>
 </html>
