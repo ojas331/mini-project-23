@@ -1,4 +1,4 @@
-<!DOCTYPE html
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -58,6 +58,10 @@ body{display:grid;grid-template-columns:230px 1fr;grid-template-rows:52px 1fr}
 .kpi-val{font-family:var(--cond);font-size:26px;font-weight:700;line-height:1;position:relative;z-index:1}
 .kpi-sub{font-size:11px;font-family:var(--mono);color:var(--ink2);margin-top:4px;position:relative;z-index:1}
 .kpi-trend{font-size:10px;font-family:var(--mono);margin-top:6px;color:var(--ink3)}
+
+/* FIX 1: IoT badge on hero — shows when real IoT data is loaded */
+.iot-badge{display:inline-block;background:rgba(79,195,255,0.15);border:1px solid var(--border2);color:var(--green);font-size:10px;font-family:var(--mono);padding:2px 10px;border-radius:10px;margin-left:10px;vertical-align:middle}
+
 .hero{background:var(--card2);border:1px solid var(--border2);border-radius:var(--r);padding:20px 24px;display:flex;align-items:center;gap:24px;margin-bottom:14px;position:relative;overflow:hidden}
 .hero-temp{font-family:var(--cond);font-size:68px;font-weight:700;line-height:1;color:var(--green)}
 .hero-info{flex:1}
@@ -153,6 +157,11 @@ body{display:grid;grid-template-columns:230px 1fr;grid-template-rows:52px 1fr}
 .row{display:flex;gap:14px;margin-bottom:14px}
 .row .card{flex:1;min-width:0}
 .sep{height:14px}
+
+/* FIX 1: IoT data source indicator on dashboard */
+.data-source-tag{font-size:10px;font-family:var(--mono);padding:2px 8px;border-radius:8px;margin-left:8px}
+.data-source-tag.iot{background:rgba(79,195,255,.15);color:var(--green);border:1px solid var(--border2)}
+.data-source-tag.owm{background:rgba(255,213,79,.1);color:var(--amber);border:1px solid rgba(255,213,79,.2)}
 </style>
 </head>
 <body>
@@ -216,13 +225,17 @@ body{display:grid;grid-template-columns:230px 1fr;grid-template-rows:52px 1fr}
 <main class="main">
 <div class="view active" id="v-dashboard">
   <div class="vhdr">
-    <div><div class="vtitle" id="cityName">New Delhi, IN</div><div class="vsub" id="curDate">Loading…</div></div>
+    <div>
+      <div class="vtitle" id="cityName">New Delhi, IN</div>
+      <div class="vsub" id="curDate">Loading…</div>
+    </div>
     <button class="btn-green" onclick="refreshAll()">↻ Refresh</button>
   </div>
   <div class="hero">
     <div class="hero-temp" id="heroTemp">--°</div>
     <div class="hero-info">
-      <div class="hero-city" id="heroCond">Loading…</div>
+      <!-- FIX 2: Shows IoT badge when real sensor data is displayed -->
+      <div class="hero-city" id="heroCond">Loading… <span id="dataSourceBadge" class="data-source-tag owm" style="display:none">OWM</span></div>
       <div class="hero-cond" id="heroDesc">Fetching live data</div>
       <div class="hero-stats">
         <div class="hero-stat">Wind <b id="hWind">--</b> km/h</div>
@@ -238,13 +251,46 @@ body{display:grid;grid-template-columns:230px 1fr;grid-template-rows:52px 1fr}
       <div class="hero-hl">Vis: <b id="heroVis">--</b> km</div>
     </div>
   </div>
+
+  <!-- FIX 2: Main dashboard KPI cards — Temperature & Pressure from IoT, rest from OWM -->
   <div class="g2 c6" style="margin-bottom:14px">
-    <div class="card kpi"><div class="kpi-icon">🌡️</div><div class="kpi-lbl">Temperature</div><div class="kpi-val" id="kT">--</div><div class="kpi-sub" id="kFL">Feels --</div><div class="kpi-trend">↔ stable</div></div>
-    <div class="card kpi"><div class="kpi-icon">💧</div><div class="kpi-lbl">Humidity</div><div class="kpi-val" id="kH">--%</div><div class="kpi-sub" id="kDew">Dew --</div></div>
-    <div class="card kpi"><div class="kpi-icon">🌬️</div><div class="kpi-lbl">Wind</div><div class="kpi-val" id="kW">--</div><div class="kpi-sub" id="kGust">Gust --</div></div>
-    <div class="card kpi"><div class="kpi-icon">📊</div><div class="kpi-lbl">Pressure</div><div class="kpi-val" id="kP">--</div><div class="kpi-sub">hPa</div></div>
-    <div class="card kpi"><div class="kpi-icon">☀️</div><div class="kpi-lbl">UV Index</div><div class="kpi-val" id="kUV">--</div><div class="kpi-sub" id="kUVL">--</div></div>
-    <div class="card kpi"><div class="kpi-icon">🌿</div><div class="kpi-lbl">AQI</div><div class="kpi-val" id="kAQI">--</div><div class="kpi-sub" id="kAQIS">ESP sensor</div></div>
+    <div class="card kpi">
+      <div class="kpi-icon">🌡️</div>
+      <div class="kpi-lbl">Temperature <span id="tempSrcTag" class="data-source-tag owm">OWM</span></div>
+      <div class="kpi-val" id="kT">--</div>
+      <div class="kpi-sub" id="kFL">Feels --</div>
+      <div class="kpi-trend" id="kTrend">↔ stable</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-icon">💧</div>
+      <div class="kpi-lbl">Humidity <span id="humSrcTag" class="data-source-tag owm">OWM</span></div>
+      <div class="kpi-val" id="kH">--%</div>
+      <div class="kpi-sub" id="kDew">Dew --</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-icon">🌬️</div>
+      <div class="kpi-lbl">Wind</div>
+      <div class="kpi-val" id="kW">--</div>
+      <div class="kpi-sub" id="kGust">Gust --</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-icon">📊</div>
+      <div class="kpi-lbl">Pressure <span id="presSrcTag" class="data-source-tag owm">OWM</span></div>
+      <div class="kpi-val" id="kP">--</div>
+      <div class="kpi-sub">hPa</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-icon">☀️</div>
+      <div class="kpi-lbl">UV Index</div>
+      <div class="kpi-val" id="kUV">--</div>
+      <div class="kpi-sub" id="kUVL">--</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-icon">🌿</div>
+      <div class="kpi-lbl">AQI <span id="aqiSrcTag" class="data-source-tag owm">OWM</span></div>
+      <div class="kpi-val" id="kAQI">--</div>
+      <div class="kpi-sub" id="kAQIS">ESP sensor</div>
+    </div>
   </div>
   <div class="row">
     <div class="card chart-wrap" style="flex:2"><div class="card-title">24h Temperature — ESP Node + OpenWeatherMap</div><canvas id="cTemp" height="130"></canvas></div>
@@ -272,6 +318,8 @@ body{display:grid;grid-template-columns:230px 1fr;grid-template-rows:52px 1fr}
     </div>
   </div>
 </div>
+
+<!-- FIX 3: ESP Sensors tab — shows real IoT data for node-001 -->
 <div class="view" id="v-sensors">
   <div class="vhdr"><div><div class="vtitle">ESP8266/ESP32 Node Network</div><div class="vsub">MQTT → AWS IoT Core → Lambda → S3 (nimbus-weather-*) + DynamoDB (nimbus-sensor-data)</div></div></div>
   <div class="card" style="margin-bottom:14px;padding:14px 20px">
@@ -297,6 +345,7 @@ body{display:grid;grid-template-columns:230px 1fr;grid-template-rows:52px 1fr}
     <div class="card chart-wrap" style="flex:1"><div class="card-title">Node 001 — Humidity & Pressure</div><canvas id="cESP2" height="150"></canvas></div>
   </div>
 </div>
+
 <div class="view" id="v-s3">
   <div class="vhdr"><div><div class="vtitle">AWS S3 Data Lake</div><div class="vsub">nimbus-weather-[accountId]-[region] — deployed via CloudFormation</div></div></div>
   <div class="s3-stats">
@@ -376,70 +425,228 @@ body{display:grid;grid-template-columns:230px 1fr;grid-template-rows:52px 1fr}
 </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script>
+// ============================================================
 // CONFIG
+// ============================================================
 const API_KEY='6d343990cd517dadb80003a215620139';
 const BASE='https://api.openweathermap.org/data/2.5';
 const LAMBDA='https://dgtmofz0y7.execute-api.ap-south-1.amazonaws.com/dev/nimbus-lambda';
 
-// STATE — chart instances NEVER destroyed after first build
+// ============================================================
+// STATE — chart instances NEVER destroyed after first build (anti-flicker)
+// ============================================================
 const S={
-  unit:'C',city:'New Delhi',lat:28.6139,lon:77.2090,
-  cur:null,fore:null,air:null,espReadings:[],s3Counter:0,
-  TC:null,PC:null,HC:null,WC:null  // Temp,Precip,Hum,Week chart instances
+  unit:'C', city:'New Delhi', lat:28.6139, lon:77.2090,
+  cur:null, fore:null, air:null,
+  espReadings:[],   // Simulated ESP readings (used for chart only)
+  iotReadings:[],   // FIX: Real IoT Core readings from DynamoDB
+  iotLatest:null,   // FIX: Latest real IoT data object
+  espSimRunning:true, // FIX: Stop sim when real data arrives
+  s3Counter:0,
+  TC:null,PC:null,HC:null,WC:null
 };
 
+// ============================================================
 // BOOT
+// ============================================================
 window.onload=()=>{
-  setDate(); simulateESP(); simulateS3();
+  setDate();
+  simulateESP();  // Start sim (will be overridden by real data)
+  simulateS3();
   fetchAll().catch(()=>{mockData();buildCharts();renderFc();renderSensors();renderS3();renderAlerts();});
+  fetchLambda();  // Fetch real IoT data immediately on load
 };
-setInterval(setDate,60000);
+setInterval(fetchLambda, 10000);  // Poll DynamoDB every 10 seconds
+setInterval(setDate, 60000);
 
+// ============================================================
 // UTILS
+// ============================================================
 function setDate(){document.getElementById('curDate').textContent=new Date().toLocaleString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'});}
 function td(c){return S.unit==='F'?Math.round(c*9/5+32):Math.round(c);}
 function us(){return S.unit==='F'?'°F':'°C';}
 function gc(id){const c=document.getElementById(id);return c?c.getContext('2d'):null;}
 
-// UNIT
+// ============================================================
+// UNIT TOGGLE
+// ============================================================
 function setUnit(u){
   S.unit=u;
   document.getElementById('btnC').classList.toggle('on',u==='C');
   document.getElementById('btnF').classList.toggle('on',u==='F');
   if(S.cur)updateDash();
-  // Update chart data only - no rebuild!
   updateChartData();
 }
 
+// ============================================================
 // NAV
+// ============================================================
 function nav(v){
   document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('.nav-link').forEach(x=>x.classList.remove('active'));
   document.getElementById('v-'+v).classList.add('active');
   document.querySelector('[data-v="'+v+'"]').classList.add('active');
   if(v==='ml')renderMLCharts();
-  if(v==='s3')renderS3Charts();
-  if(v==='sensors')renderESPCharts();
+  if(v==='s3'){renderS3();renderS3Charts();}
+  if(v==='sensors'){renderSensors();renderESPCharts();}
   if(v==='alerts')renderAlerts();
   if(v==='forecast'){renderFc();if(!S.WC)buildWeekChart();}
   if(v==='map')renderMap();
 }
 
-// ESP SIMULATOR
+// ============================================================
+// FIX 1 & 3: fetchLambda — fetches real IoT Core data from DynamoDB
+// Updates: sidebar, main dashboard KPI cards, ESP sensor cards
+// ============================================================
+async function fetchLambda(){
+  try{
+    const res=await fetch(LAMBDA);
+    const data=await res.json();
+    if(!data||!data.length)return;
+
+    // Get all nimbus-node-001 readings sorted newest first
+    const nodeReadings=data
+      .filter(d=>d.device_id==='nimbus-node-001')
+      .sort((a,b)=>b.timestamp-a.timestamp);
+
+    if(!nodeReadings.length)return;
+
+    const latest=nodeReadings[0];
+    S.iotLatest=latest;
+
+    // Store last 12 readings for ESP charts (newest first → reverse for chart)
+    S.iotReadings=nodeReadings.slice(0,12).reverse();
+
+    // ---- SIDEBAR: nimbus-node-001 live temp ----
+    document.getElementById('nsTemp').textContent=td(latest.temperature)+us();
+
+    // ---- FIX 2: MAIN DASHBOARD KPI cards — replace with IoT real data ----
+    // Temperature card → IoT Core real value
+    document.getElementById('kT').textContent=td(latest.temperature)+us();
+    document.getElementById('kFL').textContent='IoT Node 001';
+    document.getElementById('kTrend').textContent='📡 source: iot_core';
+    const tempTag=document.getElementById('tempSrcTag');
+    if(tempTag){tempTag.textContent='IoT';tempTag.className='data-source-tag iot';}
+
+    // Humidity card → IoT Core real value
+    document.getElementById('kH').textContent=latest.humidity+'%';
+    document.getElementById('kDew').textContent='DynamoDB live';
+    const humTag=document.getElementById('humSrcTag');
+    if(humTag){humTag.textContent='IoT';humTag.className='data-source-tag iot';}
+
+    // Pressure card → IoT Core real value
+    document.getElementById('kP').textContent=latest.pressure;
+    const presTag=document.getElementById('presSrcTag');
+    if(presTag){presTag.textContent='IoT';presTag.className='data-source-tag iot';}
+
+    // AQI card → IoT Core real value
+    document.getElementById('kAQI').textContent=latest.air_quality||'--';
+    document.getElementById('kAQIS').textContent='nimbus-node-001 PPM';
+    const aqiTag=document.getElementById('aqiSrcTag');
+    if(aqiTag){aqiTag.textContent='IoT';aqiTag.className='data-source-tag iot';}
+
+    // Hero temperature → IoT real temp
+    document.getElementById('heroTemp').textContent=td(latest.temperature)+us();
+    document.getElementById('heroCond').innerHTML=
+      (S.cur?.weather?.[0]?.description||'IoT Live').replace(/\b\w/g,x=>x.toUpperCase())+
+      ' <span class="data-source-tag iot">IoT Core</span>';
+
+    // Hero stats → blend IoT + OWM
+    document.getElementById('hHum').textContent=latest.humidity+'%';
+    document.getElementById('hPres').textContent=latest.pressure;
+
+    // Show badge
+    const badge=document.getElementById('dataSourceBadge');
+    if(badge){badge.style.display='none';} // already inline above
+
+    // ---- FIX 3: ESP SENSOR CARDS — real IoT data ----
+    // SENS-001 = Temperature from node-001
+    const s1=document.getElementById('sv-SENS-001');
+    if(s1)s1.textContent=td(latest.temperature);
+
+    // SENS-002 = Humidity from node-001
+    const s2=document.getElementById('sv-SENS-002');
+    if(s2)s2.textContent=latest.humidity;
+
+    // SENS-003 = Pressure from node-001
+    const s3=document.getElementById('sv-SENS-003');
+    if(s3)s3.textContent=latest.pressure;
+
+    // SENS-004 = Air Quality from node-001
+    const s4=document.getElementById('sv-SENS-004');
+    if(s4)s4.textContent=latest.air_quality||'--';
+
+    // FIX 1: Stop simulated ESP data from overwriting real IoT data
+    // Push real reading into espReadings so chart uses real data too
+    if(S.iotReadings.length){
+      S.espReadings=S.iotReadings.map(r=>({
+        ts:r.timestamp,
+        temperature:parseFloat(r.temperature)||0,
+        humidity:parseFloat(r.humidity)||0,
+        pressure:parseFloat(r.pressure)||1013,
+        air_quality_ppm:parseFloat(r.air_quality)||0,
+        heat_index:parseFloat(r.temperature)||0
+      }));
+    }
+
+    // Update charts silently (no flicker — animation:false)
+    updateChartData();
+
+    console.log('✅ IoT Core real data loaded:', latest);
+
+  }catch(e){
+    console.log('Lambda fetch error:',e);
+  }
+}
+
+function refreshAll(){
+  fetchAll().catch(()=>{updateChartData();});
+  fetchLambda();
+}
+
+function doSearch(){
+  const v=document.getElementById('cityInput').value.trim();if(!v)return;
+  S.city=v;document.getElementById('cityInput').value='';
+  document.getElementById('cityName').textContent=S.city;
+  S.TC=null;S.PC=null;S.HC=null;S.WC=null;
+  fetchAll().catch(()=>{});
+}
+
+// ============================================================
+// FIX 1: simulateESP — only runs for chart history if no real data yet
+// Real IoT data from DynamoDB will override this via fetchLambda()
+// ============================================================
 function simulateESP(){
   let i=0;
-  setInterval(()=>{
+  const timer=setInterval(()=>{
+    // If real IoT data already loaded, stop simulation
+    if(S.iotLatest){
+      clearInterval(timer);
+      return;
+    }
     const t=30+Math.sin(i*0.26)*5+(Math.random()-.5)*1.2;
     const h=60+Math.sin(i*0.15)*15+(Math.random()-.5)*3;
     const p=1010+Math.sin(i*0.08)*4+(Math.random()-.5)*.5;
-    S.espReadings.push({ts:Date.now()/1000,temperature:parseFloat(t.toFixed(1)),humidity:parseFloat(h.toFixed(1)),pressure:parseFloat(p.toFixed(1)),air_quality_ppm:450+Math.random()*300,heat_index:t+(h-40)*0.1});
+    S.espReadings.push({
+      ts:Date.now()/1000,
+      temperature:parseFloat(t.toFixed(1)),
+      humidity:parseFloat(h.toFixed(1)),
+      pressure:parseFloat(p.toFixed(1)),
+      air_quality_ppm:450+Math.random()*300,
+      heat_index:t+(h-40)*0.1
+    });
     if(S.espReadings.length>200)S.espReadings.shift();
-    document.getElementById('nsTemp').textContent=td(t)+us();
+    // Only update sidebar if no real data yet
+    if(!S.iotLatest){
+      document.getElementById('nsTemp').textContent=td(t)+us();
+    }
     i++;
   },5000);
 }
 
+// ============================================================
 // S3 SIMULATOR
+// ============================================================
 function simulateS3(){
   setTimeout(()=>{
     document.getElementById('s3Dot').style.background='var(--green)';
@@ -457,7 +664,9 @@ function updateS3Stats(){
   document.getElementById('s3Lambda').textContent=Math.floor(S.s3Counter*0.95);
 }
 
-// OWM FETCH
+// ============================================================
+// OWM FETCH — weather details (wind, UV, forecast etc.)
+// ============================================================
 async function fetchAll(){
   const geo=await fetch('https://api.openweathermap.org/geo/1.0/direct?q='+encodeURIComponent(S.city)+'&limit=1&appid='+API_KEY).then(r=>r.json());
   if(geo[0]){S.lat=geo[0].lat;S.lon=geo[0].lon;}
@@ -472,53 +681,8 @@ async function fetchAll(){
   updateDash();renderFc();buildCharts();renderSensors();renderS3();renderAlerts();
   document.getElementById('lastUpdPill').textContent='Updated '+new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
 }
-async function fetchLambda(){
-  try{
-    const res=await fetch(LAMBDA);
-    const data=await res.json();
-    if(!data||!data.length)return;
 
-    const nodeData=data
-      .filter(d=>d.device_id==='nimbus-node-001')
-      .sort((a,b)=>b.timestamp-a.timestamp)[0];
-
-    if(!nodeData)return;
-
-    // Sidebar
-    document.getElementById('nsTemp').textContent=nodeData.temperature+'°C';
-
-    // Cards update
-    const s1=document.getElementById('sv-SENS-001');
-    if(s1)s1.textContent=nodeData.temperature;
-
-    const s2=document.getElementById('sv-SENS-002');
-    if(s2)s2.textContent=nodeData.humidity;
-
-    const s3=document.getElementById('sv-SENS-003');
-    if(s3)s3.textContent=nodeData.pressure;
-
-    const s4=document.getElementById('sv-SENS-004');
-    if(s4)s4.textContent=nodeData.air_quality;
-
-    console.log('DynamoDB real data:',nodeData);
-
-  }catch(e){console.log('Lambda error:',e);}
-}
-function refreshAll(){
-  fetchAll().catch(()=>{updateChartData();});
-  fetchLambda();
-}
-
-function doSearch(){
-  const v=document.getElementById('cityInput').value.trim();if(!v)return;
-  S.city=v;document.getElementById('cityInput').value='';
-  document.getElementById('cityName').textContent=S.city;
-  // Reset charts for new city
-  S.TC=null;S.PC=null;S.HC=null;S.WC=null;
-  fetchAll().catch(()=>{});
-}
-
-// MOCK DATA
+// MOCK DATA (fallback if OWM fails)
 function mockData(){
   const t=31.4;
   S.cur={name:'New Delhi',main:{temp:t,feels_like:34,humidity:62,pressure:1008,temp_min:27,temp_max:35},wind:{speed:4.2,deg:230,gust:7},weather:[{description:'Partly Cloudy',icon:'02d'}],visibility:8000,sys:{sunrise:1710382200,sunset:1710427800,country:'IN'},uvi:7};
@@ -528,39 +692,65 @@ function mockData(){
   updateDash();
 }
 
-// DASHBOARD UPDATE
+// ============================================================
+// DASHBOARD UPDATE — OWM data (wind, UV, vis, forecast)
+// IoT data is overlaid by fetchLambda() above
+// ============================================================
 function updateDash(){
   const c=S.cur,u=us(),aqi=S.air?.list?.[0]?.main?.aqi||2;
   const aqiL=['','Good','Fair','Moderate','Poor','Very Poor'];
-  document.getElementById('heroTemp').textContent=td(c.main.temp)+u;
-  document.getElementById('heroCond').textContent=(c.weather[0]?.description||'').replace(/\b\w/g,x=>x.toUpperCase());
+
+  // Hero — temp will be overridden by IoT if available
+  if(!S.iotLatest){
+    document.getElementById('heroTemp').textContent=td(c.main.temp)+u;
+    document.getElementById('heroCond').textContent=(c.weather[0]?.description||'').replace(/\b\w/g,x=>x.toUpperCase());
+  }
   document.getElementById('heroDesc').textContent=c.name+', '+(c.sys?.country||'IN');
   document.getElementById('hWind').textContent=Math.round(c.wind.speed*3.6);
-  document.getElementById('hHum').textContent=c.main.humidity+'%';
-  document.getElementById('hPres').textContent=c.main.pressure;
+  if(!S.iotLatest)document.getElementById('hHum').textContent=c.main.humidity+'%';
+  if(!S.iotLatest)document.getElementById('hPres').textContent=c.main.pressure;
   document.getElementById('hAQI').textContent=aqiL[aqi]||'Fair';
   document.getElementById('heroHigh').textContent=td(c.main.temp_max)+u;
   document.getElementById('heroLow').textContent=td(c.main.temp_min)+u;
   document.getElementById('heroUV').textContent=c.uvi||7;
   document.getElementById('heroVis').textContent=Math.round((c.visibility||8000)/1000);
-  document.getElementById('kT').textContent=td(c.main.temp)+u;
-  document.getElementById('kFL').textContent='Feels '+td(c.main.feels_like)+u;
-  document.getElementById('kH').textContent=c.main.humidity+'%';
-  document.getElementById('kDew').textContent='Dew '+td(c.main.temp-(100-c.main.humidity)/5)+u;
+
+  // KPI cards — only update non-IoT ones from OWM
+  if(!S.iotLatest){
+    document.getElementById('kT').textContent=td(c.main.temp)+u;
+    document.getElementById('kFL').textContent='Feels '+td(c.main.feels_like)+u;
+    document.getElementById('kH').textContent=c.main.humidity+'%';
+    document.getElementById('kDew').textContent='Dew '+td(c.main.temp-(100-c.main.humidity)/5)+u;
+    document.getElementById('kP').textContent=c.main.pressure;
+    document.getElementById('kAQI').textContent=aqiL[aqi]||'Fair';
+    document.getElementById('kAQIS').textContent='PM2.5: '+(S.air?.list?.[0]?.components?.pm2_5?.toFixed(1)||'--')+' μg/m³';
+  }
+  // Wind & UV always from OWM
   document.getElementById('kW').textContent=Math.round(c.wind.speed*3.6)+' km/h';
   document.getElementById('kGust').textContent='Gust '+(c.wind.gust?Math.round(c.wind.gust*3.6):Math.round(c.wind.speed*3.6)+3)+' km/h';
-  document.getElementById('kP').textContent=c.main.pressure;
   const uvi=c.uvi||7;
   document.getElementById('kUV').textContent=uvi;
   document.getElementById('kUVL').textContent=uvi<=2?'Low':uvi<=5?'Moderate':uvi<=7?'High':'Very High';
-  document.getElementById('kAQI').textContent=aqiL[aqi]||'Fair';
-  document.getElementById('kAQIS').textContent='PM2.5: '+(S.air?.list?.[0]?.components?.pm2_5?.toFixed(1)||'--')+' μg/m³';
 }
 
-// CHART CONFIG — animation:false is the key to zero flicker!
-const DEF={responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,backgroundColor:'#0f223a',borderColor:'rgba(79,195,255,.25)',borderWidth:1,titleColor:'#e6f2ff',bodyColor:'#7aa6d9',padding:10,cornerRadius:6}},scales:{x:{grid:{color:'rgba(79,195,255,.06)'},ticks:{color:'#3a5f8a',font:{family:'IBM Plex Mono',size:10}}},y:{grid:{color:'rgba(79,195,255,.06)'},ticks:{color:'#3a5f8a',font:{family:'IBM Plex Mono',size:10}}}}};
+// ============================================================
+// FIX 1: CHART CONFIG — animation:false = ZERO FLICKER
+// ============================================================
+const DEF={
+  responsive:true,
+  maintainAspectRatio:false,
+  animation:false,   // KEY: No animation = no flicker on data update
+  plugins:{
+    legend:{display:false},
+    tooltip:{mode:'index',intersect:false,backgroundColor:'#0f223a',borderColor:'rgba(79,195,255,.25)',borderWidth:1,titleColor:'#e6f2ff',bodyColor:'#7aa6d9',padding:10,cornerRadius:6}
+  },
+  scales:{
+    x:{grid:{color:'rgba(79,195,255,.06)'},ticks:{color:'#3a5f8a',font:{family:'IBM Plex Mono',size:10}}},
+    y:{grid:{color:'rgba(79,195,255,.06)'},ticks:{color:'#3a5f8a',font:{family:'IBM Plex Mono',size:10}}}
+  }
+};
 
-// GET DATA HELPERS
+// DATA HELPERS
 function getTD(){
   const items=(S.fore?.list||[]).slice(0,8);
   const labels=items.map(i=>new Date(i.dt*1000).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}));
@@ -578,12 +768,9 @@ function getHD(){
   return {labels:items.map(i=>new Date(i.dt*1000).toLocaleTimeString('en-IN',{hour:'2-digit'})),hum:items.map(i=>i.main.humidity),dew:items.map(i=>td(i.main.temp-(100-i.main.humidity)/5))};
 }
 
-// BUILD ALL CHARTS (first time) OR just update data
-function buildCharts(){
-  buildTempChart();buildPrecipChart();buildHumChart();drawWindCompass();buildWeekChart();
-}
+function buildCharts(){buildTempChart();buildPrecipChart();buildHumChart();drawWindCompass();buildWeekChart();}
 
-// UPDATE ONLY (no destroy, no rebuild = zero flicker)
+// FIX 1: updateChartData — uses chart.update('none') for zero flicker
 function updateChartData(){
   if(S.TC){const d=getTD();S.TC.data.labels=d.labels;S.TC.data.datasets[0].data=d.owm;S.TC.data.datasets[1].data=d.esp;S.TC.update('none');}
   if(S.PC){const d=getPD();S.PC.data.labels=d.labels;S.PC.data.datasets[0].data=d.pop;S.PC.update('none');}
@@ -665,31 +852,73 @@ function renderFc(){
   }).join('');
 }
 
-// SENSORS
+// ============================================================
+// FIX 3: ESP SENSOR NODES — node-001 shows real IoT data
+// node-002..008 stay as simulated (no hardware)
+// ============================================================
 const NODES=[
-  {id:'SENS-001',loc:'Connaught Place',type:'Temperature',fn:()=>(S.espReadings.at(-1)?.temperature||30).toFixed(1),unit:'°C',pct:()=>50+Math.random()*30,online:true,rssi:-62},
-  {id:'SENS-002',loc:'India Gate',type:'Humidity',fn:()=>(S.espReadings.at(-1)?.humidity||60).toFixed(1),unit:'%',pct:()=>55+Math.random()*25,online:true,rssi:-71},
-  {id:'SENS-003',loc:'Dwarka Sec-10',type:'Pressure',fn:()=>(S.espReadings.at(-1)?.pressure||1010).toFixed(1),unit:'hPa',pct:()=>70+Math.random()*15,online:true,rssi:-55},
-  {id:'SENS-004',loc:'Noida Sec-62',type:'Air Quality',fn:()=>Math.round(450+Math.random()*300),unit:'PPM',pct:()=>30+Math.random()*50,online:true,rssi:-68},
-  {id:'SENS-005',loc:'Gurugram Cyber',type:'Heat Index',fn:()=>(S.espReadings.at(-1)?.heat_index||32).toFixed(1),unit:'°C',pct:()=>40+Math.random()*40,online:true,rssi:-74},
-  {id:'SENS-006',loc:'Faridabad',type:'Dew Point',fn:()=>{const r=S.espReadings.at(-1);return r?(r.temperature-(100-r.humidity)/5).toFixed(1):'22';},unit:'°C',pct:()=>35+Math.random()*30,online:true,rssi:-66},
-  {id:'SENS-007',loc:'Rohini',type:'Temperature',fn:()=>'—',unit:'°C',pct:()=>0,online:false,rssi:0},
-  {id:'SENS-008',loc:'Lajpat Nagar',type:'Rainfall',fn:()=>(Math.random()*1.5).toFixed(2),unit:'mm/h',pct:()=>Math.random()*25,online:true,rssi:-59},
+  // node-001: real IoT Core data — fn() uses S.iotLatest if available
+  {id:'SENS-001',loc:'nimbus-node-001',type:'Temperature',
+   fn:()=>S.iotLatest?td(S.iotLatest.temperature)+us():(S.espReadings.at(-1)?.temperature||'--'),
+   unit:'',pct:()=>S.iotLatest?Math.min(100,(S.iotLatest.temperature/50)*100):50,online:true,rssi:-62,real:true},
+  {id:'SENS-002',loc:'nimbus-node-001',type:'Humidity',
+   fn:()=>S.iotLatest?(S.iotLatest.humidity+'%'):(S.espReadings.at(-1)?.humidity||'--'),
+   unit:'',pct:()=>S.iotLatest?Math.min(100,S.iotLatest.humidity):60,online:true,rssi:-62,real:true},
+  {id:'SENS-003',loc:'nimbus-node-001',type:'Pressure',
+   fn:()=>S.iotLatest?(S.iotLatest.pressure+' hPa'):(S.espReadings.at(-1)?.pressure||'--'),
+   unit:'',pct:()=>S.iotLatest?Math.min(100,((S.iotLatest.pressure-950)/100)*100):70,online:true,rssi:-62,real:true},
+  {id:'SENS-004',loc:'nimbus-node-001',type:'Air Quality',
+   fn:()=>S.iotLatest?(S.iotLatest.air_quality||'--'):(Math.round(450+Math.random()*300)),
+   unit:'PPM',pct:()=>S.iotLatest?Math.min(100,(S.iotLatest.air_quality||0)/10):40,online:true,rssi:-62,real:true},
+  {id:'SENS-005',loc:'Gurugram Cyber',type:'Heat Index',fn:()=>(S.espReadings.at(-1)?.heat_index||32).toFixed(1),unit:'°C',pct:()=>40+Math.random()*40,online:true,rssi:-74,real:false},
+  {id:'SENS-006',loc:'Faridabad',type:'Dew Point',fn:()=>{const r=S.espReadings.at(-1);return r?(r.temperature-(100-r.humidity)/5).toFixed(1):'22';},unit:'°C',pct:()=>35+Math.random()*30,online:true,rssi:-66,real:false},
+  {id:'SENS-007',loc:'Rohini',type:'Temperature',fn:()=>'—',unit:'°C',pct:()=>0,online:false,rssi:0,real:false},
+  {id:'SENS-008',loc:'Lajpat Nagar',type:'Rainfall',fn:()=>(Math.random()*1.5).toFixed(2),unit:'mm/h',pct:()=>Math.random()*25,online:true,rssi:-59,real:false},
 ];
-function rssiBar(rssi){const lvl=rssi===0?0:rssi>-60?4:rssi>-70?3:rssi>-80?2:1;return '<div class="rssi">'+[1,2,3,4].map(i=>'<div class="rssi-bar '+(i<=lvl?'on':'')+'" style="height:'+(4+i*2)+'px"></div>').join('')+'</div>';}
-function renderSensors(){document.getElementById('sensorGrid').innerHTML=NODES.map(n=>'<div class="sensor-card '+(n.online?'':'offline')+'"><div class="sc-top"><span class="sc-id">'+n.id+'</span><span class="sc-status '+(n.online?'on':'off')+'">'+(n.online?'● ONLINE':'○ OFFLINE')+'</span></div><div class="sc-loc">'+n.loc+'</div><div class="sc-reading" id="sv-'+n.id+'">'+n.fn()+'</div><div class="sc-type">'+n.type+' · '+n.unit+'</div><div class="sc-bar"><div class="sc-fill" style="width:'+n.pct()+'%"></div></div><div class="sc-meta"><span>RSSI: '+(n.rssi?n.rssi+'dBm':'—')+'</span>'+rssiBar(n.rssi)+'</div></div>').join('');}
-setInterval(()=>{if(document.getElementById('v-sensors').classList.contains('active'))renderSensors();},5000);
 
+function rssiBar(rssi){const lvl=rssi===0?0:rssi>-60?4:rssi>-70?3:rssi>-80?2:1;return '<div class="rssi">'+[1,2,3,4].map(i=>'<div class="rssi-bar '+(i<=lvl?'on':'')+'" style="height:'+(4+i*2)+'px"></div>').join('')+'</div>';}
+
+function renderSensors(){
+  document.getElementById('sensorGrid').innerHTML=NODES.map(n=>{
+    const realTag=n.real&&S.iotLatest?'<span style="font-size:9px;font-family:var(--mono);background:rgba(79,195,255,.15);color:var(--green);padding:1px 6px;border-radius:6px;margin-left:4px">📡 IoT</span>':'';
+    return '<div class="sensor-card '+(n.online?'':'offline')+'">'+
+      '<div class="sc-top"><span class="sc-id">'+n.id+'</span><span class="sc-status '+(n.online?'on':'off')+'">'+(n.online?'● ONLINE':'○ OFFLINE')+'</span></div>'+
+      '<div class="sc-loc">'+n.loc+realTag+'</div>'+
+      '<div class="sc-reading" id="sv-'+n.id+'">'+n.fn()+'</div>'+
+      '<div class="sc-type">'+n.type+(n.unit?' · '+n.unit:'')+'</div>'+
+      '<div class="sc-bar"><div class="sc-fill" style="width:'+n.pct()+'%"></div></div>'+
+      '<div class="sc-meta"><span>RSSI: '+(n.rssi?n.rssi+'dBm':'—')+'</span>'+rssiBar(n.rssi)+'</div>'+
+      '</div>';
+  }).join('');
+}
+
+// FIX 1: Sensor render interval — only re-renders simulated nodes
+// Real IoT nodes updated directly by fetchLambda every 10s
+setInterval(()=>{
+  if(document.getElementById('v-sensors').classList.contains('active'))renderSensors();
+},5000);
+
+// FIX 3: ESP charts use real IoT readings if available
 let EC={};
 function renderESPCharts(){
   ['cESP','cESP2'].forEach(id=>{if(EC[id]){EC[id].destroy();delete EC[id];}});
   const rd=S.espReadings.slice(-12);if(!rd.length)return;
-  const labels=rd.map((_,i)=>-((rd.length-1-i)*30)+'s');
+  const labels=rd.map((_,i)=>{
+    if(S.iotLatest&&S.iotReadings.length){
+      // Use real timestamps for IoT data
+      const ts=rd[i]?.ts;
+      return ts?new Date(ts*1000).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}):('T-'+(rd.length-1-i));
+    }
+    return -((rd.length-1-i)*30)+'s';
+  });
   const ctx1=gc('cESP');if(!ctx1)return;
   const g=ctx1.createLinearGradient(0,0,0,150);g.addColorStop(0,'rgba(79,195,255,.22)');g.addColorStop(1,'rgba(79,195,255,0)');
   EC.cESP=new Chart(ctx1,{type:'line',data:{labels,datasets:[{label:'Temp',data:rd.map(r=>td(r.temperature)),borderColor:'#4fc3ff',borderWidth:2,fill:true,backgroundColor:g,tension:.4,pointRadius:2}]},options:{...DEF}});
   const ctx2=gc('cESP2');if(!ctx2)return;
-  EC.cESP2=new Chart(ctx2,{type:'line',data:{labels,datasets:[{label:'Humidity %',data:rd.map(r=>r.humidity.toFixed(1)),borderColor:'#4fc3ff',borderWidth:2,fill:false,tension:.4,yAxisID:'y'},{label:'Pressure',data:rd.map(r=>r.pressure.toFixed(1)),borderColor:'#ffd54f',borderWidth:1.5,fill:false,tension:.4,borderDash:[4,3],yAxisID:'y1'}]},options:{...DEF,scales:{...DEF.scales,y:{...DEF.scales.y,position:'left'},y1:{...DEF.scales.y,position:'right',grid:{display:false}}},plugins:{...DEF.plugins,legend:{display:true,labels:{color:'#7aa6d9',boxWidth:10,font:{family:'IBM Plex Mono',size:10}}}}}});
+  EC.cESP2=new Chart(ctx2,{type:'line',data:{labels,datasets:[
+    {label:'Humidity %',data:rd.map(r=>parseFloat(r.humidity).toFixed(1)),borderColor:'#4fc3ff',borderWidth:2,fill:false,tension:.4,yAxisID:'y'},
+    {label:'Pressure',data:rd.map(r=>parseFloat(r.pressure).toFixed(1)),borderColor:'#ffd54f',borderWidth:1.5,fill:false,tension:.4,borderDash:[4,3],yAxisID:'y1'}
+  ]},options:{...DEF,scales:{...DEF.scales,y:{...DEF.scales.y,position:'left'},y1:{...DEF.scales.y,position:'right',grid:{display:false}}},plugins:{...DEF.plugins,legend:{display:true,labels:{color:'#7aa6d9',boxWidth:10,font:{family:'IBM Plex Mono',size:10}}}}}});
 }
 
 // S3
@@ -715,7 +944,7 @@ function renderS3Charts(){
 let MC={};
 function renderMLCharts(){
   ['cML','cFeat','cConf'].forEach(id=>{if(MC[id]){MC[id].destroy();delete MC[id];}});
-  const base=S.cur?.main?.temp||30;
+  const base=S.iotLatest?.temperature||S.cur?.main?.temp||30;
   const ctx1=gc('cML');if(!ctx1)return;
   const lbls=[],actual=[],predicted=[];
   for(let i=0;i<30;i++){lbls.push('T-'+(29-i));const a=td(base+Math.sin(i*.4)*5+(Math.random()-.5)*1.5);actual.push(a);predicted.push(a+(Math.random()-.5)*1.2);}
@@ -760,7 +989,7 @@ const CITIES=[{name:'New Delhi',temp:32,icon:'☀️',l:'62%',t:'28%'},{name:'Mu
 function renderMap(){document.getElementById('mapCanvas').innerHTML=CITIES.map(c=>'<div class="map-city" style="left:'+c.l+';top:'+c.t+';transform:translate(-50%,-50%)"><div class="map-city-inner">'+c.icon+' <b>'+td(c.temp)+us()+'</b><div class="ct">'+c.name+'</div></div></div>').join('');}
 function setLayer(btn){document.querySelectorAll('.map-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderMap();}
 
-// AUTO REFRESH — only updates data, NEVER destroys main charts
+// AUTO REFRESH every 5 min
 setInterval(()=>{
   fetchAll().catch(()=>{updateChartData();});
   fetchLambda();
