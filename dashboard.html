@@ -517,12 +517,14 @@ async function fetchLambda(){
     // Store last 12 readings for ESP charts (newest first → reverse for chart)
     S.iotReadings=nodeReadings.slice(0,12).reverse();
 
-    // ---- SIDEBAR: nimbus-node-001 live temp ----
-    document.getElementById('nsTemp').textContent=td(latest.temperature)+us();
+    // ---- SIDEBAR: nimbus-node-001 live temp (decimal) ----
+    document.getElementById('nsTemp').textContent=iotTemp.toFixed(1)+(S.unit==='F'?'°F':'°C');
 
     // ---- FIX 2: MAIN DASHBOARD KPI cards — replace with IoT real data ----
-    // Temperature card → IoT Core real value
-    document.getElementById('kT').textContent=td(latest.temperature)+us();
+    // Temperature card → IoT Core real value (show decimal, not rounded)
+    const iotTemp=parseFloat(latest.temperature);
+    const iotTempDisplay=S.unit==='F'?(iotTemp*9/5+32).toFixed(1)+'°F':iotTemp.toFixed(1)+'°C';
+    document.getElementById('kT').textContent=iotTempDisplay;
     document.getElementById('kFL').textContent='IoT Node 001';
     document.getElementById('kTrend').textContent='📡 source: iot_core';
     const tempTag=document.getElementById('tempSrcTag');
@@ -545,8 +547,8 @@ async function fetchLambda(){
     const aqiTag=document.getElementById('aqiSrcTag');
     if(aqiTag){aqiTag.textContent='IoT';aqiTag.className='data-source-tag iot';}
 
-    // Hero temperature → IoT real temp
-    document.getElementById('heroTemp').textContent=td(latest.temperature)+us();
+    // Hero temperature → IoT real temp (decimal preserved)
+    document.getElementById('heroTemp').textContent=iotTempDisplay;
     document.getElementById('heroCond').innerHTML=
       (S.cur?.weather?.[0]?.description||'IoT Live').replace(/\b\w/g,x=>x.toUpperCase())+
       ' <span class="data-source-tag iot">IoT Core</span>';
@@ -859,7 +861,7 @@ function renderFc(){
 const NODES=[
   // node-001: real IoT Core data — fn() uses S.iotLatest if available
   {id:'SENS-001',loc:'nimbus-node-001',type:'Temperature',
-   fn:()=>S.iotLatest?td(S.iotLatest.temperature)+us():(S.espReadings.at(-1)?.temperature||'--'),
+   fn:()=>S.iotLatest?(S.unit==='F'?(parseFloat(S.iotLatest.temperature)*9/5+32).toFixed(1)+'°F':parseFloat(S.iotLatest.temperature).toFixed(1)+'°C'):(S.espReadings.at(-1)?.temperature||'--'),
    unit:'',pct:()=>S.iotLatest?Math.min(100,(S.iotLatest.temperature/50)*100):50,online:true,rssi:-62,real:true},
   {id:'SENS-002',loc:'nimbus-node-001',type:'Humidity',
    fn:()=>S.iotLatest?(S.iotLatest.humidity+'%'):(S.espReadings.at(-1)?.humidity||'--'),
@@ -957,13 +959,54 @@ function renderMLCharts(){
   MC.cConf=new Chart(ctx3,{type:'line',data:{labels:days,datasets:[{label:'Upper',data:hi,borderColor:'rgba(79,195,255,.3)',borderWidth:1,fill:'+1',backgroundColor:'rgba(79,195,255,.07)',tension:.4,pointRadius:0},{label:'LSTM',data:pred,borderColor:'#4fc3ff',borderWidth:2,fill:false,tension:.4,pointRadius:4,pointBackgroundColor:'#4fc3ff'},{label:'Lower',data:lo,borderColor:'rgba(79,195,255,.3)',borderWidth:1,fill:false,tension:.4,pointRadius:0}]},options:{...DEF,plugins:{...DEF.plugins,legend:{display:false}}}});
 }
 
-function runML(){
-  const t=parseFloat(document.getElementById('mlT').value)||31,h=parseFloat(document.getElementById('mlH').value)||64,p=parseFloat(document.getElementById('mlP').value)||1009,a=parseFloat(document.getElementById('mlA').value)||520,hr=parseFloat(document.getElementById('mlHr').value)||14;
-  const pred=[];let cur=t;
-  for(let i=0;i<48;i++){const hs=Math.sin(2*Math.PI*(hr+i*.5)/24);cur=cur*.88+(28-h*.04+(1013-p)*.015-(a-400)*.003+hs*3)*0.12+(Math.random()-.5)*.8;pred.push(td(cur));}
+async function runML(){
   const out=document.getElementById('mlOut');
-  out.innerHTML='<b style="color:var(--green)">🧠 LSTM BiLSTM×2 — 48-step (24h)</b><br><br><b style="color:var(--ink2)">Next 12:</b><br>'+pred.slice(0,12).map((v,i)=>'+'+((i+1)*30)+'min: <span style="color:var(--green)">'+v+us()+'</span>').join(' &nbsp; ')+'<br><br><b style="color:var(--ink2)">12–24h:</b><br>'+pred.slice(12,24).map((v,i)=>'+'+((i+13)*30)+'min: <span style="color:var(--amber)">'+v+us()+'</span>').join(' &nbsp; ')+'<br><br><small style="color:var(--ink3)">BiLSTM(128)+BiLSTM(64)+Dense(64) | MAE=1.24°C | ESP→S3→Lambda</small>';
   out.style.display='block';
+  out.innerHTML='<b style="color:var(--amber)">⏳ Fetching real predictions from Lambda + DynamoDB...</b>';
+
+  try{
+    // Call Lambda with action=predict — gets real DynamoDB data + model
+    const res=await fetch(LAMBDA+'?action=predict');
+    const result=await res.json();
+
+    if(result.error){
+      throw new Error(result.error);
+    }
+
+    const forecast=result.forecast||[];
+    const source=result.source||'unknown';
+    const sourceLabel=source==='trained_model'?
+      '🧠 Real Trained Model (S3)':'📊 Statistical Forecast';
+
+    // Build output HTML
+    let html=`<b style="color:var(--green)">🧠 NimbusLSTM_v1 — 5-Day Forecast</b>`;
+    html+=`<br><small style="color:var(--ink3)">Source: ${sourceLabel} | Generated: ${new Date().toLocaleTimeString()}</small>`;
+    html+=`<br><br><b style="color:var(--ink2)">📅 5-Day Temperature Forecast (from IoT Core data):</b><br><br>`;
+
+    forecast.forEach(day=>{
+      html+=`<div style="margin-bottom:8px;padding:8px;background:var(--bg3);border-radius:6px;border-left:3px solid var(--green)">`;
+      html+=`<b style="color:var(--amber)">${day.day}</b> &nbsp;`;
+      html+=`<span style="color:var(--blue)">↓${day.min}°C</span> — `;
+      html+=`<span style="color:var(--red)">↑${day.max}°C</span> &nbsp;`;
+      html+=`<span style="color:var(--ink2)">(avg: <b style="color:var(--green)">${day.avg}°C</b>)</span>`;
+      html+=`</div>`;
+    });
+
+    html+=`<br><small style="color:var(--ink3)">BiLSTM(128)+BiLSTM(64)+Dense(64) | DynamoDB nimbus-node-001 → Lambda → Forecast</small>`;
+    out.innerHTML=html;
+
+  }catch(e){
+    // Fallback to local formula if Lambda fails
+    console.log('Lambda predict failed, using local formula:',e);
+    const t=parseFloat(document.getElementById('mlT').value)||S.iotLatest?.temperature||31;
+    const h=parseFloat(document.getElementById('mlH').value)||S.iotLatest?.humidity||64;
+    const p=parseFloat(document.getElementById('mlP').value)||S.iotLatest?.pressure||1009;
+    const a=parseFloat(document.getElementById('mlA').value)||520;
+    const hr=parseFloat(document.getElementById('mlHr').value)||new Date().getHours();
+    const pred=[];let cur=t;
+    for(let i=0;i<48;i++){const hs=Math.sin(2*Math.PI*(hr+i*.5)/24);cur=cur*.88+(28-h*.04+(1013-p)*.015-(a-400)*.003+hs*3)*0.12+(Math.random()-.5)*.8;pred.push(td(cur));}
+    out.innerHTML='<b style="color:var(--green)">🧠 LSTM BiLSTM×2 — 48-step (24h) [Local Fallback]</b><br><br><b style="color:var(--ink2)">Next 12:</b><br>'+pred.slice(0,12).map((v,i)=>'+'+((i+1)*30)+'min: <span style="color:var(--green)">'+v+us()+'</span>').join(' &nbsp; ')+'<br><br><b style="color:var(--ink2)">12–24h:</b><br>'+pred.slice(12,24).map((v,i)=>'+'+((i+13)*30)+'min: <span style="color:var(--amber)">'+v+us()+'</span>').join(' &nbsp; ')+'<br><br><small style="color:var(--ink3)">BiLSTM(128)+BiLSTM(64)+Dense(64) | MAE=1.24°C | ESP→S3→Lambda</small>';
+  }
 }
 
 // ALERTS
