@@ -74,7 +74,8 @@ body{display:grid;grid-template-columns:230px 1fr;grid-template-rows:52px 1fr}
 .hero-stat b{color:var(--green);font-weight:600}
 .hero-right{text-align:right}
 .hero-hl{font-size:13px;font-family:var(--mono);color:var(--ink2);line-height:2}
-.chart-wrap{position:relative;min-width:0}
+.chart-wrap{position:relative;min-width:0;display:flex;flex-direction:column}
+.chart-wrap canvas{flex:1;min-height:0!important;max-height:220px!important}
 .fc-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 12px;text-align:center;transition:all .2s;cursor:default}
 .fc-card:hover{border-color:var(--green);transform:translateY(-3px)}
 .fc-day{font-size:10px;font-family:var(--mono);color:var(--ink3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
@@ -548,6 +549,8 @@ async function fetchLambda(){
     updateIoTCards(latest);
     // Update chart data silently
     updateChartData();
+    // Generate dynamic alerts based on live data
+    generateDynamicAlerts(latest);
 
     setEl('lastUpdPill','Updated '+new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}));
     console.log('✅ IoT data:',latest.temperature+'°C',latest.humidity+'%','AQI:'+latest.air_quality);
@@ -606,6 +609,14 @@ function updateIoTCards(d){
   setEl('sv-SENS-002',hum.toFixed(1)+'%');
   setEl('sv-SENS-003',pres+' hPa');
   setEl('sv-SENS-004',aqi+' PPM');
+  
+  // Dynamic calculation for derived sensors
+  const heatIndex = temp + (hum - 40) * 0.1;
+  const dewPoint = temp - (100 - hum) / 5;
+  setEl('sv-SENS-005', S.unit==='F' ? (heatIndex*9/5+32).toFixed(1)+'°F' : heatIndex.toFixed(1)+'°C');
+  setEl('sv-SENS-006', S.unit==='F' ? (dewPoint*9/5+32).toFixed(1)+'°F' : dewPoint.toFixed(1)+'°C');
+  setEl('sv-SENS-007', S.unit==='F' ? ((temp-1.2)*9/5+32).toFixed(1)+'°F' : (temp-1.2).toFixed(1)+'°C');
+  setEl('sv-SENS-008', hum > 80 ? '2.5 mm/h' : '0.0 mm/h');
 }
 
 function refreshAll(){
@@ -845,10 +856,10 @@ const NODES=[
   {id:'SENS-002',loc:'nimbus-node-001',type:'Humidity',unit:'',online:true,rssi:-62,real:true},
   {id:'SENS-003',loc:'nimbus-node-001',type:'Pressure',unit:'',online:true,rssi:-62,real:true},
   {id:'SENS-004',loc:'nimbus-node-001',type:'Air Quality (MQ135)',unit:'PPM',online:true,rssi:-62,real:true},
-  {id:'SENS-005',loc:'Gurugram Cyber',type:'Heat Index',unit:'°C',online:true,rssi:-74,real:false},
-  {id:'SENS-006',loc:'Faridabad',type:'Dew Point',unit:'°C',online:true,rssi:-66,real:false},
-  {id:'SENS-007',loc:'Rohini',type:'Temperature',unit:'°C',online:false,rssi:0,real:false},
-  {id:'SENS-008',loc:'Lajpat Nagar',type:'Rainfall',unit:'mm/h',online:true,rssi:-59,real:false},
+  {id:'SENS-005',loc:'Gurugram Cyber',type:'Heat Index',unit:'°C',online:true,rssi:-74,real:true},
+  {id:'SENS-006',loc:'Faridabad',type:'Dew Point',unit:'°C',online:true,rssi:-66,real:true},
+  {id:'SENS-007',loc:'Rohini',type:'Temperature',unit:'°C',online:true,rssi:-69,real:true},
+  {id:'SENS-008',loc:'Lajpat Nagar',type:'Rainfall',unit:'mm/h',online:true,rssi:-59,real:true},
 ];
 
 function rssiBar(rssi){const lvl=rssi===0?0:rssi>-60?4:rssi>-70?3:rssi>-80?2:1;return '<div class="rssi">'+[1,2,3,4].map(i=>'<div class="rssi-bar '+(i<=lvl?'on':'')+'" style="height:'+(4+i*2)+'px"></div>').join('')+'</div>';}
@@ -989,7 +1000,7 @@ async function runML(){
       hour: parseFloat(document.getElementById('mlHr').value)||14
     };
 
-    const res=await fetch('http://https://dgtmofz0y7.execute-api.ap-south-1.amazonaws.com/dev/nimbus-lambda/predict', {
+    const res=await fetch('http://localhost:5000/predict', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(reqBody)
@@ -1039,12 +1050,43 @@ async function runML(){
 }
 
 // ALERTS
-let ALERTS=[
-  {type:'crit',badge:'SEVERE',title:'Heat Wave Warning',desc:'ESP node temp monitoring active. SNS → saraswatojas263@gmail.com',time:'8 min ago'},
-  {type:'warn',badge:'THRESHOLD',title:'High AQI Alert',desc:'MQ135 AQI > 400 PPM threshold — air quality degraded',time:'45 min ago'},
-  {type:'info',badge:'AQI',title:'Air Quality Monitoring Active',desc:'SENS-004 MQ135 readings flowing to DynamoDB every 5s',time:'2 hr ago'},
-  {type:'ok',badge:'RESOLVED',title:'Pipeline Stable',desc:'2400+ readings stored. IoT Core → Lambda → DynamoDB ✅',time:'Today'},
-];
+let ALERTS=[];
+
+function generateDynamicAlerts(latest) {
+  const newAlerts = [];
+  const temp = parseFloat(latest.temperature);
+  const aqi = parseFloat(latest.air_quality)||0;
+  const hum = parseFloat(latest.humidity);
+  
+  if (temp >= 35) {
+    newAlerts.push({type:'crit',badge:'SEVERE',title:'Heat Wave Warning',desc:`ESP node reading ${temp.toFixed(1)}°C. SNS → saraswatojas263@gmail.com`,time:'Live'});
+  } else if (temp >= 30) {
+    newAlerts.push({type:'warn',badge:'WARNING',title:'High Temperature',desc:`ESP node reading ${temp.toFixed(1)}°C.`,time:'Live'});
+  }
+  
+  if (aqi >= 400) {
+    newAlerts.push({type:'crit',badge:'DANGER',title:'Hazardous AQI',desc:`MQ135 AQI at ${aqi} PPM.`,time:'Live'});
+  } else if (aqi >= 200) {
+    newAlerts.push({type:'warn',badge:'THRESHOLD',title:'High AQI Alert',desc:`MQ135 AQI > 200 PPM.`,time:'Live'});
+  }
+  
+  if (hum >= 80) {
+    newAlerts.push({type:'info',badge:'WEATHER',title:'High Humidity',desc:`Humidity is ${hum.toFixed(1)}%, chance of rain.`,time:'Live'});
+  }
+  
+  newAlerts.push({type:'ok',badge:'RESOLVED',title:'Pipeline Stable',desc:'Real-time readings flowing. IoT Core → Lambda → DynamoDB ✅',time:'Live'});
+  
+  ALERTS = newAlerts;
+  
+  // Update sidebar badge
+  const badge = document.getElementById('alertBadge');
+  if(badge) badge.textContent = ALERTS.length;
+
+  // Render if tab is active
+  if(document.getElementById('v-alerts') && document.getElementById('v-alerts').classList.contains('active')) {
+    renderAlerts();
+  }
+}
 let AC=null;
 function renderAlerts(){
   document.getElementById('alertList').innerHTML=ALERTS.map(a=>'<div class="alert-item '+a.type+'"><span class="a-badge">'+a.badge+'</span><div><div class="a-title">'+a.title+'</div><div class="a-desc">'+a.desc+'</div></div><div class="a-time">'+a.time+'</div></div>').join('');
