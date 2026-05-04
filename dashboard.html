@@ -1000,7 +1000,7 @@ async function runML(){
       hour: parseFloat(document.getElementById('mlHr').value)||14
     };
 
-    const res=await fetch('http://localhost:5000/predict', {
+    const res=await fetch('http://13.206.121.207/predict', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(reqBody)
